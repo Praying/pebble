@@ -43,8 +43,8 @@ use wezterm_bidi::ParagraphDirectionHint;
 use wezterm_config_derive::ConfigMeta;
 use wezterm_dynamic::{FromDynamic, ToDynamic};
 use wezterm_input_types::{
-    IntegratedTitleButton, IntegratedTitleButtonAlignment, IntegratedTitleButtonStyle, Modifiers,
-    UIKeyCapRendering, WindowDecorations,
+    default_window_decorations, IntegratedTitleButton, IntegratedTitleButtonAlignment,
+    IntegratedTitleButtonStyle, Modifiers, UIKeyCapRendering, WindowDecorations,
 };
 use wezterm_term::TerminalSize;
 
@@ -54,16 +54,16 @@ pub struct Config {
     #[dynamic(default = "default_font_size")]
     pub font_size: f64,
 
-    #[dynamic(
-        default = "default_one_point_oh_f64",
-        validate = "validate_line_height"
-    )]
+    #[dynamic(default = "default_line_height", validate = "validate_line_height")]
     pub line_height: f64,
 
     #[dynamic(default = "default_one_point_oh_f64")]
     pub cell_width: f64,
 
-    #[dynamic(try_from = "crate::units::OptPixelUnit", default)]
+    #[dynamic(
+        try_from = "crate::units::OptPixelUnit",
+        default = "default_cursor_thickness"
+    )]
     pub cursor_thickness: Option<Dimension>,
 
     #[dynamic(try_from = "crate::units::OptPixelUnit", default)]
@@ -78,7 +78,7 @@ pub struct Config {
     #[dynamic(default)]
     pub allow_square_glyphs_to_overflow_width: AllowSquareGlyphOverflow,
 
-    #[dynamic(default)]
+    #[dynamic(default = "default_window_decorations")]
     pub window_decorations: WindowDecorations,
 
     #[dynamic(default = "default_integrated_title_buttons")]
@@ -93,7 +93,7 @@ pub struct Config {
     #[dynamic(default)]
     pub integrated_title_button_style: IntegratedTitleButtonStyle,
 
-    #[dynamic(default)]
+    #[dynamic(default = "default_integrated_title_button_color")]
     pub integrated_title_button_color: IntegratedTitleButtonColor,
 
     /// When using FontKitXXX font systems, a set of directories to
@@ -130,7 +130,7 @@ pub struct Config {
     /// The color palette
     pub colors: Option<Palette>,
 
-    #[dynamic(default)]
+    #[dynamic(default = "default_true")]
     pub switch_to_last_active_tab_when_closing_tab: bool,
 
     /// When true, launching a new wezterm instance will prefer
@@ -196,6 +196,9 @@ pub struct Config {
 
     /// Use a named color scheme rather than the palette specified
     /// by the colors setting.
+    /// The default is the built-in `Pebble` scheme, which pebble
+    /// ships as its curated out-of-the-box look.
+    #[dynamic(default = "default_color_scheme")]
     pub color_scheme: Option<String>,
 
     /// Named color schemes
@@ -491,8 +494,9 @@ pub struct Config {
     #[dynamic(default = "default_true")]
     pub mouse_wheel_scrolls_tabs: bool,
 
-    /// If true, tab bar titles are prefixed with the tab index
-    #[dynamic(default = "default_true")]
+    /// If true, tab bar titles are prefixed with the tab index.
+    /// pebble defaults this to false for cleaner tab titles.
+    #[dynamic(default)]
     pub show_tab_index_in_tab_bar: bool,
 
     #[dynamic(default = "default_true")]
@@ -518,7 +522,7 @@ pub struct Config {
     #[dynamic(default)]
     pub hide_tab_bar_if_only_one_tab: bool,
 
-    #[dynamic(default)]
+    #[dynamic(default = "default_true")]
     pub enable_scroll_bar: bool,
 
     #[dynamic(try_from = "crate::units::PixelUnit", default = "default_half_cell")]
@@ -547,7 +551,7 @@ pub struct Config {
     pub anti_alias_custom_block_glyphs: bool,
 
     /// Controls the amount of padding to use around the terminal cell area
-    #[dynamic(default)]
+    #[dynamic(default = "default_window_padding")]
     pub window_padding: WindowPadding,
 
     #[dynamic(default)]
@@ -584,7 +588,7 @@ pub struct Config {
     pub kde_window_background_blur: bool,
 
     /// Only works on Wayland compositors that support ext-background-effect-v1 protocol
-    #[dynamic(default)]
+    #[dynamic(default = "default_true")]
     pub wayland_window_background_blur: bool,
 
     /// Only works on Windows
@@ -604,7 +608,7 @@ pub struct Config {
     /// This only works on systems with a compositing window manager.
     /// Setting opacity to a value other than 1.0 can impact render
     /// performance.
-    #[dynamic(default = "default_one_point_oh")]
+    #[dynamic(default = "default_window_background_opacity")]
     pub window_background_opacity: f32,
 
     /// inactive_pane_hue, inactive_pane_saturation and
@@ -670,7 +674,7 @@ pub struct Config {
     /// can override the default style in different situations (eg:
     /// an editor can change it depending on the mode), but this value
     /// controls how the cursor appears when it is reset to default.
-    /// The default is `SteadyBlock`.
+    /// The default is `SteadyBar`.
     /// Acceptable values are `SteadyBlock`, `BlinkingBlock`,
     /// `SteadyUnderline`, `BlinkingUnderline`, `SteadyBar`,
     /// and `BlinkingBar`.
@@ -849,10 +853,10 @@ pub struct Config {
     #[dynamic(default = "default_glyph_cache_image_cache_size")]
     pub glyph_cache_image_cache_size: usize,
 
-    #[dynamic(default)]
+    #[dynamic(default = "default_visual_bell")]
     pub visual_bell: VisualBell,
 
-    #[dynamic(default)]
+    #[dynamic(default = "default_audible_bell")]
     pub audible_bell: AudibleBell,
 
     #[dynamic(default)]
@@ -1025,9 +1029,9 @@ impl Config {
         // multiple.  In addition, it spawns a lot of subprocesses,
         // so we do this bit "by-hand"
 
-        let mut paths = vec![PathPossibility::optional(HOME_DIR.join(".wezterm.lua"))];
+        let mut paths = vec![PathPossibility::optional(HOME_DIR.join(".pebble.lua"))];
         for dir in CONFIG_DIRS.iter() {
-            paths.push(PathPossibility::optional(dir.join("wezterm.lua")))
+            paths.push(PathPossibility::optional(dir.join("pebble.lua")))
         }
 
         if cfg!(windows) {
@@ -1041,12 +1045,12 @@ impl Config {
             // dir as the executable that will take precedence.
             if let Ok(exe_name) = std::env::current_exe() {
                 if let Some(exe_dir) = exe_name.parent() {
-                    paths.insert(0, PathPossibility::optional(exe_dir.join("wezterm.lua")));
+                    paths.insert(0, PathPossibility::optional(exe_dir.join("pebble.lua")));
                 }
             }
         }
-        if let Some(path) = std::env::var_os("WEZTERM_CONFIG_FILE") {
-            log::trace!("Note: WEZTERM_CONFIG_FILE is set in the environment");
+        if let Some(path) = std::env::var_os("PEBBLE_CONFIG_FILE") {
+            log::trace!("Note: PEBBLE_CONFIG_FILE is set in the environment");
             paths.insert(0, PathPossibility::required(path.into()));
         }
 
@@ -1074,11 +1078,11 @@ impl Config {
             }
         }
 
-        // We didn't find (or were asked to skip) a wezterm.lua file, so
+        // We didn't find (or were asked to skip) a pebble.lua file, so
         // update the environment to make it simpler to understand this
         // state.
-        std::env::remove_var("WEZTERM_CONFIG_FILE");
-        std::env::remove_var("WEZTERM_CONFIG_DIR");
+        std::env::remove_var("PEBBLE_CONFIG_FILE");
+        std::env::remove_var("PEBBLE_CONFIG_DIR");
 
         match Self::try_default() {
             Err(err) => LoadedConfig {
@@ -1149,9 +1153,9 @@ impl Config {
                 // problems earlier than we use them.
                 let _ = cfg.key_bindings();
 
-                std::env::set_var("WEZTERM_CONFIG_FILE", p);
+                std::env::set_var("PEBBLE_CONFIG_FILE", p);
                 if let Some(dir) = p.parent() {
-                    std::env::set_var("WEZTERM_CONFIG_DIR", dir);
+                    std::env::set_var("PEBBLE_CONFIG_DIR", dir);
                 }
                 Ok(cfg)
             });
@@ -1618,21 +1622,63 @@ impl Config {
         cmd.env("COLORTERM", "truecolor");
         // TERM_PROGRAM and TERM_PROGRAM_VERSION are an emerging
         // de-facto standard for identifying the terminal.
-        cmd.env("TERM_PROGRAM", "WezTerm");
+        cmd.env("TERM_PROGRAM", "Pebble");
         cmd.env("TERM_PROGRAM_VERSION", crate::wezterm_version());
     }
 }
 
 fn default_check_for_updates() -> bool {
-    cfg!(not(feature = "distro-defaults"))
+    // pebble is a downstream fork: the upstream wezterm release
+    // channel doesn't apply here, so don't nag about updates
+    // by default.
+    false
+}
+
+fn default_color_scheme() -> Option<String> {
+    Some("Pebble".to_string())
+}
+
+fn default_line_height() -> f64 {
+    1.05
+}
+
+fn default_cursor_thickness() -> Option<Dimension> {
+    Some(Dimension::Pixels(2.0))
+}
+
+fn default_integrated_title_button_color() -> IntegratedTitleButtonColor {
+    IntegratedTitleButtonColor::Custom((0xa8, 0xb4, 0xc8).into())
+}
+
+fn default_window_padding() -> WindowPadding {
+    WindowPadding {
+        left: Dimension::Cells(1.25),
+        right: Dimension::Cells(1.25),
+        top: Dimension::Cells(0.75),
+        bottom: Dimension::Cells(0.75),
+    }
+}
+
+fn default_visual_bell() -> VisualBell {
+    VisualBell {
+        fade_in_duration_ms: 80,
+        fade_in_function: EasingFunction::EaseOut,
+        fade_out_duration_ms: 160,
+        fade_out_function: EasingFunction::EaseIn,
+        target: Default::default(),
+    }
+}
+
+fn default_audible_bell() -> AudibleBell {
+    AudibleBell::Disabled
 }
 
 fn default_pane_select_fg_color() -> RgbaColor {
-    SrgbaTuple(0.75, 0.75, 0.75, 1.0).into()
+    (0xdd, 0xe4, 0xf0).into()
 }
 
 fn default_pane_select_bg_color() -> RgbaColor {
-    SrgbaTuple(0., 0., 0., 0.5).into()
+    SrgbaTuple(0.05, 0.06, 0.08, 0.82).into()
 }
 
 fn default_pane_select_font_size() -> f64 {
@@ -1649,11 +1695,11 @@ fn default_char_select_font_size() -> f64 {
 }
 
 fn default_char_select_fg_color() -> RgbaColor {
-    SrgbaTuple(0.75, 0.75, 0.75, 1.0).into()
+    (0xdd, 0xe4, 0xf0).into()
 }
 
 fn default_char_select_bg_color() -> RgbaColor {
-    (0x33, 0x33, 0x33).into()
+    (0x15, 0x1a, 0x22).into()
 }
 
 fn default_command_palette_font_size() -> f64 {
@@ -1661,15 +1707,22 @@ fn default_command_palette_font_size() -> f64 {
 }
 
 fn default_command_palette_fg_color() -> RgbaColor {
-    SrgbaTuple(0.75, 0.75, 0.75, 1.0).into()
+    (0xdd, 0xe4, 0xf0).into()
 }
 
 fn default_command_palette_bg_color() -> RgbaColor {
-    (0x33, 0x33, 0x33).into()
+    (0x15, 0x1a, 0x22).into()
 }
 
 fn default_swallow_mouse_click_on_window_focus() -> bool {
     cfg!(target_os = "macos")
+}
+
+/// Subtle translucency: gives windows a hint of depth wherever a
+/// compositor is available (most Wayland sessions, X11 with picom),
+/// and silently degrades to a fully opaque window otherwise.
+fn default_window_background_opacity() -> f32 {
+    0.96
 }
 
 fn default_mux_output_parser_coalesce_delay_ms() -> u64 {
@@ -1703,7 +1756,7 @@ fn default_swap_backspace_and_delete() -> bool {
 }
 
 fn default_scrollback_lines() -> usize {
-    3500
+    10000
 }
 
 const MAX_SCROLLBACK_LINES: usize = 999_999_999;
@@ -1758,26 +1811,26 @@ fn default_font_size() -> f64 {
 
 pub(crate) fn compute_cache_dir() -> anyhow::Result<PathBuf> {
     if let Some(runtime) = dirs_next::cache_dir() {
-        return Ok(runtime.join("wezterm"));
+        return Ok(runtime.join("pebble"));
     }
 
-    Ok(crate::HOME_DIR.join(".local/share/wezterm"))
+    Ok(crate::HOME_DIR.join(".local/share/pebble"))
 }
 
 pub(crate) fn compute_data_dir() -> anyhow::Result<PathBuf> {
     if let Some(runtime) = dirs_next::data_dir() {
-        return Ok(runtime.join("wezterm"));
+        return Ok(runtime.join("pebble"));
     }
 
-    Ok(crate::HOME_DIR.join(".local/share/wezterm"))
+    Ok(crate::HOME_DIR.join(".local/share/pebble"))
 }
 
 pub(crate) fn compute_runtime_dir() -> anyhow::Result<PathBuf> {
     if let Some(runtime) = dirs_next::runtime_dir() {
-        return Ok(runtime.join("wezterm"));
+        return Ok(runtime.join("pebble"));
     }
 
-    Ok(crate::HOME_DIR.join(".local/share/wezterm"))
+    Ok(crate::HOME_DIR.join(".local/share/pebble"))
 }
 
 pub fn pki_dir() -> anyhow::Result<PathBuf> {
@@ -1822,7 +1875,7 @@ fn default_anim_fps() -> u8 {
 }
 
 fn default_max_fps() -> u64 {
-    60
+    120
 }
 
 fn default_tiling_desktop_environments() -> Vec<String> {
@@ -1884,7 +1937,7 @@ fn default_enq_answerback() -> String {
 }
 
 fn default_tab_max_width() -> usize {
-    16
+    20
 }
 
 fn default_update_interval() -> u64 {
@@ -1910,11 +1963,11 @@ fn default_inactive_pane_hsb() -> HsbTransform {
 #[derive(FromDynamic, ToDynamic, Clone, Copy, Debug, Default)]
 pub enum DefaultCursorStyle {
     BlinkingBlock,
-    #[default]
     SteadyBlock,
     BlinkingUnderline,
     SteadyUnderline,
     BlinkingBar,
+    #[default]
     SteadyBar,
 }
 
@@ -2211,4 +2264,131 @@ fn default_macos_forward_mods() -> Modifiers {
 
 fn default_colr_rasterizer() -> FontRasterizerSelection {
     FontRasterizerSelection::Harfbuzz
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    /// Pebble ships an opinionated, out-of-the-box look tuned for
+    /// Linux.  These tests pin the defaults that make up that
+    /// experience so they don't silently regress.
+    #[test]
+    fn pebble_default_experience() {
+        let cfg = Config::default_config();
+
+        assert_eq!(cfg.color_scheme.as_deref(), Some("Pebble"));
+        let expected_bg: RgbaColor = (0x11, 0x14, 0x1a).into();
+        assert_eq!(cfg.resolved_palette.background, Some(expected_bg));
+        let expected_fg: RgbaColor = (0xdd, 0xe4, 0xf0).into();
+        assert_eq!(cfg.resolved_palette.foreground, Some(expected_fg));
+
+        assert!(matches!(
+            cfg.default_cursor_style,
+            DefaultCursorStyle::SteadyBar
+        ));
+        assert_eq!(cfg.scrollback_lines, 10000);
+        assert_eq!(cfg.max_fps, 120);
+        assert!(!cfg.check_for_updates);
+        assert_eq!(cfg.window_background_opacity, 0.96);
+        assert!(cfg.wayland_window_background_blur);
+
+        // Quartz spacing and motion
+        assert_eq!(cfg.line_height, 1.05);
+        assert_eq!(cfg.cursor_thickness, Some(Dimension::Pixels(2.0)));
+        assert!(cfg.enable_scroll_bar);
+        assert!(cfg.visual_bell.fade_in_duration_ms > 0);
+        assert!(cfg.visual_bell.fade_out_duration_ms > 0);
+        assert!(matches!(cfg.audible_bell, AudibleBell::Disabled));
+        assert!(cfg.switch_to_last_active_tab_when_closing_tab);
+        assert_eq!(cfg.window_padding.left, Dimension::Cells(1.25));
+        assert_eq!(cfg.window_padding.right, Dimension::Cells(1.25));
+        assert_eq!(cfg.window_padding.top, Dimension::Cells(0.75));
+        assert_eq!(cfg.window_padding.bottom, Dimension::Cells(0.75));
+
+        // Title bar / tab bar polish
+        assert!(!cfg.show_tab_index_in_tab_bar);
+        assert_eq!(cfg.tab_max_width, 20);
+        let tab_bar = cfg.resolved_palette.tab_bar.as_ref().expect("tab bar");
+        let active_tab = tab_bar.active_tab.as_ref().expect("active tab");
+        assert_eq!(active_tab.bg_color, (0x1f, 0x6e, 0xc8).into());
+        assert_eq!(active_tab.fg_color, (0xf5, 0xf7, 0xfb).into());
+        assert_eq!(
+            cfg.window_frame.font_size,
+            Some(10.5),
+            "integrated title buttons need a slightly taller bar"
+        );
+
+        #[cfg(any(
+            target_os = "linux",
+            target_os = "freebsd",
+            target_os = "netbsd",
+            target_os = "openbsd",
+            target_os = "dragonfly"
+        ))]
+        {
+            assert!(cfg
+                .window_decorations
+                .contains(WindowDecorations::INTEGRATED_BUTTONS));
+            assert!(!cfg.window_decorations.contains(WindowDecorations::TITLE));
+            assert!(cfg.window_decorations.contains(WindowDecorations::RESIZE));
+            assert!(matches!(
+                cfg.integrated_title_button_style,
+                IntegratedTitleButtonStyle::Windows
+            ));
+        }
+    }
+
+    fn relative_luminance(color: RgbaColor) -> f64 {
+        let SrgbaTuple(r, g, b, _) = *color;
+        let channel = |value: f32| {
+            let value = value as f64;
+            if value <= 0.03928 {
+                value / 12.92
+            } else {
+                ((value + 0.055) / 1.055).powf(2.4)
+            }
+        };
+        0.2126 * channel(r) + 0.7152 * channel(g) + 0.0722 * channel(b)
+    }
+
+    fn contrast_ratio(a: RgbaColor, b: RgbaColor) -> f64 {
+        let (lighter, darker) = {
+            let a = relative_luminance(a);
+            let b = relative_luminance(b);
+            if a > b {
+                (a, b)
+            } else {
+                (b, a)
+            }
+        };
+        (lighter + 0.05) / (darker + 0.05)
+    }
+
+    #[test]
+    fn pebble_quartz_is_readable() {
+        let cfg = Config::default_config();
+        let palette = &cfg.resolved_palette;
+        let background = palette.background.expect("background");
+        let foreground = palette.foreground.expect("foreground");
+
+        assert!(
+            contrast_ratio(foreground, background) >= 7.0,
+            "default text should meet WCAG AAA contrast"
+        );
+
+        let selection_fg = palette.selection_fg.expect("selection_fg");
+        let selection_bg = palette.selection_bg.expect("selection_bg");
+        assert!(
+            contrast_ratio(selection_fg, selection_bg) >= 4.5,
+            "selected text should meet WCAG AA contrast"
+        );
+
+        let tab_bar = palette.tab_bar.as_ref().expect("tab bar");
+        let active_tab = tab_bar.active_tab.as_ref().expect("active tab");
+        assert!(
+            contrast_ratio(active_tab.fg_color, active_tab.bg_color) >= 4.5,
+            "active tab label should meet WCAG AA contrast"
+        );
+    }
 }

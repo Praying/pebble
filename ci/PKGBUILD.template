@@ -1,18 +1,16 @@
-# Maintainer:  Wez Furlong <wez at wezfurlong dot org>
-# NOTE: if you're looking at this on AUR, this file is generated from
-# https://github.com/wezterm/wezterm/blob/main/ci/PKGBUILD.template
-# by automation in the wezterm repo.
+# Maintainer: Pebble contributors
+# This file is generated from the Pebble repository's CI template.
 
-pkgname=wezterm-bin
+pkgname=pebble-bin
 _tag=@TAG@
 pkgver=$(echo $_tag | tr - .)
 pkgrel=2
-pkgdesc='A GPU-accelerated cross-platform terminal emulator and multiplexer implemented in Rust'
+pkgdesc='A GPU-accelerated Linux terminal emulator and multiplexer'
 arch=('i686' 'x86_64')
-url='https://wezterm.org'
+url='https://github.com/Praying/pebble'
 license=('MIT')
-provides=('wezterm')
-conflicts=('wezterm')
+provides=('pebble')
+conflicts=('pebble')
 # Don't strip: it will break the binary and it only saves ~10% anyway
 options=('!strip')
 makedepends=('fuse')
@@ -27,11 +25,11 @@ depends=(
   'xcb-util-wm'
 )
 optdepends=(
-  'python-nautilus: WezTerm context menu in Nautilus'
+  'python-nautilus: Pebble context menu in Nautilus'
 )
 source=(
-  "wezterm::https://github.com/wezterm/wezterm/releases/download/${_tag}/WezTerm-${_tag}-Ubuntu16.04.AppImage"
-  'LICENSE::https://github.com/wezterm/wezterm/raw/main/LICENSE.md'
+  "pebble::https://github.com/Praying/pebble/releases/download/${_tag}/Pebble-${_tag}-Ubuntu16.04.AppImage"
+  'LICENSE::https://github.com/Praying/pebble/raw/main/LICENSE.md'
 )
 sha256sums=(
   '@SHA256@'
@@ -39,26 +37,26 @@ sha256sums=(
 )
 
 prepare() {
-  chmod +x "${srcdir}/wezterm"
+  chmod +x "${srcdir}/pebble"
 }
 
 pkgver() {
-  "${srcdir}/wezterm" --version | cut -d' ' -f2 | tr - .
+  "${srcdir}/pebble" --version | cut -d' ' -f2 | tr - .
 }
 
 build() {
-  "${srcdir}/wezterm" --appimage-extract >/dev/null
+  "${srcdir}/pebble" --appimage-extract >/dev/null
 }
 
 package() {
-  install -Dm755 squashfs-root/usr/bin/wezterm -t "${pkgdir}/usr/bin/"
-  install -Dm755 squashfs-root/usr/bin/wezterm-gui -t "${pkgdir}/usr/bin/"
-  install -Dm755 squashfs-root/usr/bin/wezterm-mux-server -t "${pkgdir}/usr/bin/"
+  install -Dm755 squashfs-root/usr/bin/pebble -t "${pkgdir}/usr/bin/"
+  install -Dm755 squashfs-root/usr/bin/pebble-gui -t "${pkgdir}/usr/bin/"
+  install -Dm755 squashfs-root/usr/bin/pebble-mux-server -t "${pkgdir}/usr/bin/"
   install -Dm644 LICENSE -t "${pkgdir}/usr/share/licenses/${pkgname}"
-  install -Dm644 squashfs-root/usr/share/icons/hicolor/128x128/apps/org.wezfurlong.wezterm.png \
-                 "${pkgdir}/usr/share/icons/hicolor/128x128/apps/org.wezfurlong.wezterm.png"
-  install -Dm644 squashfs-root/usr/share/applications/org.wezfurlong.wezterm.desktop \
-                 "${pkgdir}/usr/share/applications/org.wezfurlong.wezterm.desktop"
-  install -Dm644 squashfs-root/usr/share/nautilus-python/extensions/wezterm-nautilus.py \
-                 "${pkgdir}/usr/share/nautilus-python/extensions/wezterm-nautilus.py"
+  install -Dm644 squashfs-root/usr/share/icons/hicolor/128x128/apps/io.github.praying.pebble.png \
+                 "${pkgdir}/usr/share/icons/hicolor/128x128/apps/io.github.praying.pebble.png"
+  install -Dm644 squashfs-root/usr/share/applications/io.github.praying.pebble.desktop \
+                 "${pkgdir}/usr/share/applications/io.github.praying.pebble.desktop"
+  install -Dm644 squashfs-root/usr/share/nautilus-python/extensions/pebble-nautilus.py \
+                 "${pkgdir}/usr/share/nautilus-python/extensions/pebble-nautilus.py"
 }

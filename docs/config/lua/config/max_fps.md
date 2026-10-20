@@ -2,12 +2,13 @@
 tags:
   - tuning
 ---
-# `max_fps = 60`
+# `max_fps = 120`
 
 Limits the maximum number of frames per second that wezterm will
 attempt to draw.
 
-Defaults to `60`.
+Defaults to `120`, a good match for the high refresh rate displays
+that are common on Linux.
 
 | Environment | Supported Since |
 |-------------|-----------------|

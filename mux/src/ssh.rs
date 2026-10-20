@@ -267,7 +267,7 @@ impl RemoteSshDomain {
         // One option is to forward the mux via unix domain, another is to
         // embed the mux protocol in an escape sequence and just use the
         // existing terminal connection
-        env.insert("WEZTERM_REMOTE_PANE".to_string(), pane_id.to_string());
+        env.insert("PEBBLE_REMOTE_PANE".to_string(), pane_id.to_string());
 
         fn build_env_command(
             dir: Option<String>,

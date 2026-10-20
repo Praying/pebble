@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>io.github.praying.pebble</id>
+  <metadata_license>MIT</metadata_license>
+  <project_license>MIT</project_license>
+  <name>Pebble</name>
+  <summary>A beautiful GPU-accelerated terminal for Linux</summary>
+  <description>
+    <p>
+      Pebble is a WezTerm fork with a curated, zero-configuration look for
+      Linux desktops. It ships the Pebble Quartz color scheme, a unified tab
+      bar and title bar, bundled JetBrains Mono with Nerd Font symbols, native
+      Wayland support with background blur, and sensible defaults for Arch and
+      KDE Plasma 6 users.
+    </p>
+
+    <p>
+      Configuration is expressed using Lua. The default experience is designed
+      to work out of the box, while every visual choice can still be overridden
+      in ~/.config/pebble/pebble.lua.
+    </p>
+
+    <p>
+      Like WezTerm, Pebble supports tabs, split panes, integrated SSH
+      multiplexing, hyperlinks, ligatures and true color.
+    </p>
+  </description>
+
+  <launchable type="desktop-id">io.github.praying.pebble.desktop</launchable>
+
+  <categories>
+    <category>System</category>
+    <category>TerminalEmulator</category>
+    <category>Utility</category>
+  </categories>
+
+  <url type="homepage">https://github.com/Praying/pebble</url>
+  <url type="bugtracker">https://github.com/Praying/pebble/issues</url>
+
+  <developer_name>Pebble contributors</developer_name>
+
+  <content_rating type="oars-1.0" />
+
+  <releases>
+    <release version="0.1.0" date="2026-10-20">
+      <description>
+        <p>Initial Pebble Quartz release.</p>
+      </description>
+    </release>
+  </releases>
+</component>

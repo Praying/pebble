@@ -13,9 +13,8 @@ that wezterm makes when the bell rings.
 
 The follow are possible values:
 
-* `"SystemBeep"` - perform the system beep or alert sound. This is the default. On Wayland systems, which have no system beep function, it does not produce a sound.
-* `"Disabled"` - don't make a sound
+* `"SystemBeep"` - perform the system beep or alert sound. This is the upstream default. On Wayland systems, which have no system beep function, it does not produce a sound.
+* `"Disabled"` - don't make a sound. Pebble uses this by default and shows a brief visual bell instead.
 
 
 See also [visual_bell](visual_bell.md) and [bell event](../window-events/bell.md)
-

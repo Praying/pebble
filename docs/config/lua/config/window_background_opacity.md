@@ -3,7 +3,7 @@ tags:
   - appearance
   - background
 ---
-# `window_background_opacity = 1.0`
+# `window_background_opacity = 0.96`
 
 {{since('20201031-154415-9614e117')}}
 
@@ -13,8 +13,12 @@ is rendered translucent (some refer to this as transparent rather than
 translucent), causing the windows and desktop behind it to show through.
 
 The value is a floating point number in the range `0.0` (completely
-translucent/transparent) through to `1.0` (completely opaque), which is the
-default.
+translucent/transparent) through to `1.0` (completely opaque).
+
+pebble defaults to a subtle `0.96`: barely there when nothing composites
+behind the window, but it picks up a tasteful hint of depth wherever a
+compositor is present. Set it to `1.0` if you prefer a fully opaque
+window.
 
 ```lua
 config.window_background_opacity = 0.8
@@ -26,7 +30,7 @@ The opacity also applies to the
 
 ## Performance
 
-Setting `window_background_opacity` to a value other than the default `1.0`
+Setting `window_background_opacity` to a value other than `1.0`
 may impact render performance.
 
 ## Platform support

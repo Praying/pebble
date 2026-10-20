@@ -2,12 +2,12 @@ pub mod ringlog;
 pub use ringlog::setup_logger;
 use std::path::{Path, PathBuf};
 
-pub fn set_wezterm_executable() {
+pub fn set_pebble_executable() {
     if let Ok(exe) = std::env::current_exe() {
         if let Some(dir) = exe.parent() {
-            std::env::set_var("WEZTERM_EXECUTABLE_DIR", dir);
+            std::env::set_var("PEBBLE_EXECUTABLE_DIR", dir);
         }
-        std::env::set_var("WEZTERM_EXECUTABLE", exe);
+        std::env::set_var("PEBBLE_EXECUTABLE", exe);
     }
 }
 
@@ -52,9 +52,9 @@ pub fn fixup_appimage() {
 
         // Since our AppImage includes multiple utilities, we want to
         // be able to use them, so add that location to the PATH!
-        // WEZTERM_EXECUTABLE_DIR is set by `set_wezterm_executable`
+        // PEBBLE_EXECUTABLE_DIR is set by `set_pebble_executable`
         // which is called before `fixup_appimage`
-        if let Some(dir) = std::env::var_os("WEZTERM_EXECUTABLE_DIR") {
+        if let Some(dir) = std::env::var_os("PEBBLE_EXECUTABLE_DIR") {
             if let Some(path) = std::env::var_os("PATH") {
                 let mut paths = std::env::split_paths(&path).collect::<Vec<_>>();
                 paths.insert(0, PathBuf::from(dir));
@@ -85,9 +85,9 @@ pub fn fixup_appimage() {
         /// the correct environment when it is launched via wezterm.
         /// However, if we are using the system wezterm to spawn a portable
         /// AppImage then we want these to not take effect.
-        fn clean_wezterm_config_env() {
-            std::env::remove_var("WEZTERM_CONFIG_FILE");
-            std::env::remove_var("WEZTERM_CONFIG_DIR");
+        fn clean_pebble_config_env() {
+            std::env::remove_var("PEBBLE_CONFIG_FILE");
+            std::env::remove_var("PEBBLE_CONFIG_DIR");
         }
 
         if config::HOME_DIR.starts_with(append_extra_file_name_suffix(&appimage, ".home")) {
@@ -97,7 +97,7 @@ pub fn fixup_appimage() {
                 "HOME",
                 dirs_next::home_dir().expect("can't resolve HOME dir"),
             );
-            clean_wezterm_config_env();
+            clean_pebble_config_env();
         }
 
         if std::env::var("XDG_CONFIG_HOME")
@@ -107,7 +107,7 @@ pub fn fixup_appimage() {
             .unwrap_or_default()
         {
             std::env::remove_var("XDG_CONFIG_HOME");
-            clean_wezterm_config_env();
+            clean_pebble_config_env();
         }
     }
 }
@@ -214,7 +214,7 @@ pub fn bootstrap() {
     setup_logger();
     register_panic_hook();
 
-    set_wezterm_executable();
+    set_pebble_executable();
 
     #[cfg(target_os = "macos")]
     set_lang_from_locale();

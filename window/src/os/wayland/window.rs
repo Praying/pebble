@@ -447,6 +447,32 @@ impl WindowOps for WaylandWindow {
         });
     }
 
+    fn request_drag_move(&self) {
+        let connection = match Connection::get() {
+            Some(connection) => connection.wayland(),
+            None => return,
+        };
+
+        let (pointer, serial) = {
+            let state = connection.wayland_state.borrow();
+            let pointer = match state.pointer.as_ref() {
+                Some(pointer) => pointer.pointer().clone(),
+                None => return,
+            };
+            let serial = *state.last_serial.borrow();
+            (pointer, serial)
+        };
+
+        if serial == 0 {
+            return;
+        }
+
+        WaylandConnection::with_window_inner(self.0, move |inner| {
+            inner.frame_action(&pointer, serial, FrameAction::Move);
+            Ok(())
+        });
+    }
+
     fn get_clipboard(&self, clipboard: Clipboard) -> Future<String> {
         let mut promise = Promise::new();
         let future = promise.get_future().unwrap();

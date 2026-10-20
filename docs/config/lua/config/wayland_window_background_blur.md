@@ -2,13 +2,16 @@
 tags:
     - appearance
 ---
-# wayland_window_background_blur = false
+# wayland_window_background_blur = true
 
 When combined with [window_background_opacity](window_background_opacity.md),
 enables background blur using the Wayland background effect protocol.
 
 This can be used to produce a translucent window effect rather than
 a crystal clear transparent window effect.
+
+pebble enables this by default; compositors that don't implement the
+background effect protocol simply ignore it.
 
 This effect can be achieved by adding the following to the configuration:
 ```lua

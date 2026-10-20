@@ -385,7 +385,7 @@ impl LocalDomain {
 
             let is_default_prog = cmd.is_default_prog();
 
-            // Note: WEZTERM_UNIX_SOCKET, WEZTERM_CONFIG_(FILE|DIR) and other env
+            // Note: PEBBLE_UNIX_SOCKET, PEBBLE_CONFIG_(FILE|DIR) and other env
             // vars are not included in this.
             // We can't include them: their paths are only meaningful in the sandbox
             // and cannot be reasonably accessed from outside it in the shell.
@@ -476,10 +476,10 @@ impl LocalDomain {
         if let Some(dir) = command_dir {
             cmd.cwd(dir);
         }
-        if let Ok(sock) = std::env::var("WEZTERM_UNIX_SOCKET") {
-            cmd.env("WEZTERM_UNIX_SOCKET", sock);
+        if let Ok(sock) = std::env::var("PEBBLE_UNIX_SOCKET") {
+            cmd.env("PEBBLE_UNIX_SOCKET", sock);
         }
-        cmd.env("WEZTERM_PANE", pane_id.to_string());
+        cmd.env("PEBBLE_PANE", pane_id.to_string());
         if let Some(agent) = Mux::get().agent.as_ref() {
             cmd.env("SSH_AUTH_SOCK", agent.path());
         }

@@ -385,6 +385,14 @@ pub struct TabBarColors {
     #[dynamic(default)]
     pub new_tab_hover: Option<TabBarColor>,
 
+    /// Styling for the Pebble brand icon shown at the start of the fancy tab bar
+    #[dynamic(default)]
+    pub app_icon: Option<TabBarColor>,
+
+    /// Styling for the Pebble brand icon while it is hovered
+    #[dynamic(default)]
+    pub app_icon_hover: Option<TabBarColor>,
+
     #[dynamic(default)]
     pub inactive_tab_edge: Option<RgbaColor>,
 
@@ -423,6 +431,18 @@ impl TabBarColors {
             .unwrap_or_else(default_inactive_tab_hover)
     }
 
+    pub fn app_icon(&self) -> TabBarColor {
+        self.app_icon
+            .clone()
+            .unwrap_or_else(default_app_icon)
+    }
+
+    pub fn app_icon_hover(&self) -> TabBarColor {
+        self.app_icon_hover
+            .clone()
+            .unwrap_or_else(default_app_icon_hover)
+    }
+
     pub fn inactive_tab_edge(&self) -> RgbaColor {
         self.inactive_tab_edge
             .unwrap_or_else(default_inactive_tab_edge)
@@ -452,6 +472,8 @@ impl TabBarColors {
             inactive_tab_edge_hover: overlay!(inactive_tab_edge_hover),
             new_tab: overlay!(new_tab),
             new_tab_hover: overlay!(new_tab_hover),
+            app_icon: overlay!(app_icon),
+            app_icon_hover: overlay!(app_icon_hover),
         }
     }
 }
@@ -486,36 +508,51 @@ impl TryFrom<String> for IntegratedTitleButtonColor {
 }
 
 fn default_background() -> RgbaColor {
-    (0x33, 0x33, 0x33).into()
+    (0x11, 0x14, 0x1a).into()
 }
 
 fn default_inactive_tab_edge() -> RgbaColor {
-    RgbColor::new_8bpc(0x57, 0x57, 0x57).into()
+    RgbColor::new_8bpc(0x2a, 0x33, 0x40).into()
 }
 
 fn default_inactive_tab_edge_hover() -> RgbaColor {
-    RgbColor::new_8bpc(0x36, 0x36, 0x36).into()
+    RgbColor::new_8bpc(0x3a, 0x46, 0x58).into()
 }
 
 fn default_inactive_tab() -> TabBarColor {
     TabBarColor {
-        bg_color: (0x33, 0x33, 0x33).into(),
-        fg_color: (0x80, 0x80, 0x80).into(),
+        bg_color: (0x0d, 0x10, 0x15).into(),
+        fg_color: (0x8b, 0x95, 0xa7).into(),
         ..TabBarColor::default()
     }
 }
 fn default_inactive_tab_hover() -> TabBarColor {
     TabBarColor {
-        bg_color: (0x1f, 0x1f, 0x1f).into(),
-        fg_color: (0x90, 0x90, 0x90).into(),
-        italic: true,
+        bg_color: (0x1b, 0x22, 0x2d).into(),
+        fg_color: (0xdd, 0xe4, 0xf0).into(),
         ..TabBarColor::default()
     }
 }
 fn default_active_tab() -> TabBarColor {
     TabBarColor {
-        bg_color: (0x00, 0x00, 0x00).into(),
-        fg_color: (0xc0, 0xc0, 0xc0).into(),
+        bg_color: (0x1f, 0x6e, 0xc8).into(),
+        fg_color: (0xf5, 0xf7, 0xfb).into(),
+        ..TabBarColor::default()
+    }
+}
+
+fn default_app_icon() -> TabBarColor {
+    TabBarColor {
+        bg_color: (0xd4, 0x55, 0x78).into(),
+        fg_color: (0xff, 0xff, 0xff).into(),
+        ..TabBarColor::default()
+    }
+}
+
+fn default_app_icon_hover() -> TabBarColor {
+    TabBarColor {
+        bg_color: (0xe2, 0x65, 0x87).into(),
+        fg_color: (0xff, 0xff, 0xff).into(),
         ..TabBarColor::default()
     }
 }
@@ -560,15 +597,15 @@ fn default_new_tab() -> String {
 }
 
 fn default_window_hide() -> String {
-    " . ".to_string()
+    " – ".to_string()
 }
 
 fn default_window_maximize() -> String {
-    " - ".to_string()
+    " □ ".to_string()
 }
 
 fn default_window_close() -> String {
-    " X ".to_string()
+    " × ".to_string()
 }
 
 #[derive(Debug, Clone, FromDynamic, ToDynamic)]
@@ -632,7 +669,7 @@ impl Default for WindowFrameConfig {
             button_hover_fg: default_button_hover_fg(),
             button_hover_bg: default_button_hover_bg(),
             font: None,
-            font_size: None,
+            font_size: Some(10.5),
             border_left_width: default_zero_pixel(),
             border_right_width: default_zero_pixel(),
             border_top_height: default_zero_pixel(),
@@ -646,27 +683,27 @@ impl Default for WindowFrameConfig {
 }
 
 fn default_inactive_titlebar_bg() -> RgbaColor {
-    RgbColor::new_8bpc(0x33, 0x33, 0x33).into()
+    RgbColor::new_8bpc(0x25, 0x26, 0x29).into()
 }
 
 fn default_active_titlebar_bg() -> RgbaColor {
-    RgbColor::new_8bpc(0x33, 0x33, 0x33).into()
+    RgbColor::new_8bpc(0x25, 0x26, 0x29).into()
 }
 
 fn default_inactive_titlebar_fg() -> RgbaColor {
-    RgbColor::new_8bpc(0xcc, 0xcc, 0xcc).into()
+    RgbColor::new_8bpc(0xad, 0xb3, 0xbd).into()
 }
 
 fn default_active_titlebar_fg() -> RgbaColor {
-    RgbColor::new_8bpc(0xff, 0xff, 0xff).into()
+    RgbColor::new_8bpc(0xf5, 0xf7, 0xfb).into()
 }
 
 fn default_inactive_titlebar_border_bottom() -> RgbaColor {
-    RgbColor::new_8bpc(0x2b, 0x20, 0x42).into()
+    RgbColor::new_8bpc(0x20, 0x21, 0x25).into()
 }
 
 fn default_active_titlebar_border_bottom() -> RgbaColor {
-    RgbColor::new_8bpc(0x2b, 0x20, 0x42).into()
+    RgbColor::new_8bpc(0x1f, 0x6e, 0xc8).into()
 }
 
 fn default_button_hover_fg() -> RgbaColor {
@@ -674,15 +711,15 @@ fn default_button_hover_fg() -> RgbaColor {
 }
 
 fn default_button_fg() -> RgbaColor {
-    RgbColor::new_8bpc(0xcc, 0xcc, 0xcc).into()
+    RgbColor::new_8bpc(0xb1, 0xb6, 0xc0).into()
 }
 
 fn default_button_hover_bg() -> RgbaColor {
-    RgbColor::new_8bpc(0x1f, 0x1f, 0x1f).into()
+    RgbColor::new_8bpc(0x42, 0x43, 0x4a).into()
 }
 
 fn default_button_bg() -> RgbaColor {
-    RgbColor::new_8bpc(0x33, 0x33, 0x33).into()
+    RgbColor::new_8bpc(0x25, 0x26, 0x29).into()
 }
 
 #[derive(Debug, Default, Clone, Eq, PartialEq, FromDynamic, ToDynamic)]

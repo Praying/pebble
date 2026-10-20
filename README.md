@@ -1,40 +1,57 @@
-# Wez's Terminal
+# Pebble
 
-<img height="128" alt="WezTerm Icon" src="https://raw.githubusercontent.com/wezterm/wezterm/main/assets/icon/wezterm-icon.svg" align="left"> *A GPU-accelerated cross-platform terminal emulator and multiplexer written by <a href="https://github.com/wez">@wez</a> and implemented in <a href="https://www.rust-lang.org/">Rust</a>*
+![Pebble icon](assets/icon/pebble.svg)
 
-User facing docs and guide at: https://wezterm.org/
+Pebble is a WezTerm fork with a simple mission: **a beautiful terminal
+that feels right the moment you launch it on Linux** — no config file
+required.
 
-![Screenshot](docs/screenshots/two.png)
+The out-of-the-box experience is tuned around three goals:
 
-*Screenshot of wezterm on macOS, running vim*
+1. **It just works** — sensible defaults, generous scrollback (10,000
+   lines), your login shell, bundled JetBrains Mono (with Nerd Font
+   symbols), and no update-check nagging from the upstream release
+   channel.
+2. **Linux first** — native Wayland (with background blur on compositors
+   that support the background-effect protocol), X11 fallback, IME and
+   fish/zsh/bash friendly.
+3. **Pebble Quartz** — a graphite blue-grey palette with jade accents and warm
+   sand highlights, plus a unified tab/title bar with integrated window
+   buttons, a steady bar cursor and subtle translucency.
+
+On Linux, the Pebble tab bar is the window's only title bar; this avoids stacking
+the desktop's system title bar over the terminal's own tabs. Resize borders
+remain enabled, and the tab bar can be used to drag the window.
+
+Every default can still be overridden in `~/.config/pebble/pebble.lua`. The Lua
+API remains compatible with upstream configurations through `require 'wezterm'`.
+
+Pebble is built from the WezTerm codebase; the upstream configuration reference
+is available at <https://wezterm.org/>.
 
 ## Installation
 
-https://wezterm.org/installation
+Build the command-line launcher, GUI, and multiplexer server from source:
+
+```sh
+cargo build --release -p wezterm -p wezterm-gui -p wezterm-mux-server
+```
+
+The binaries are `pebble`, `pebble-gui`, and `pebble-mux-server`. Run
+`pebble --help` to see available commands.
 
 ## Getting help
 
 This is a spare time project, so please bear with me.  There are a couple of channels for support:
 
-* You can use the [GitHub issue tracker](https://github.com/wezterm/wezterm/issues) to see if someone else has a similar issue, or to file a new one.
-* Start or join a thread in our [GitHub Discussions](https://github.com/wezterm/wezterm/discussions); if you have general
-  questions or want to chat with other wezterm users, you're welcome here!
-* There is a [Matrix room via Element.io](https://matrix.to/#/#wezterm:matrix.org)
-  for (potentially!) real time discussions.
+* Use the [Pebble issue tracker](https://github.com/Praying/pebble/issues) to report bugs or request features.
+* For upstream terminal behavior and Lua API details, see the [WezTerm documentation](https://wezterm.org/).
 
-The GitHub Discussions and Element/Gitter rooms are better suited for questions
-than bug reports, but don't be afraid to use whichever you are most comfortable
-using and we'll work it out.
+Pebble is a community project derived from WezTerm. Please include your Linux
+distribution, desktop session (Wayland or X11), and relevant logs when filing an
+issue.
 
-## Supporting the Project
+## Upstream
 
-If you use and like WezTerm, please consider sponsoring it: your support helps
-to cover the fees required to maintain the project and to validate the time
-spent working on it!
-
-[Read more about sponsoring](https://wezterm.org/sponsor.html).
-
-* [![Sponsor WezTerm](https://img.shields.io/github/sponsors/wez?label=Sponsor%20WezTerm&logo=github&style=for-the-badge)](https://github.com/sponsors/wez)
-* [Patreon](https://patreon.com/WezFurlong)
-* [Ko-Fi](https://ko-fi.com/wezfurlong)
-* [Liberapay](https://liberapay.com/wez)
+Pebble is built on the work of the WezTerm project. See the upstream project
+for development and sponsorship information.

@@ -158,6 +158,115 @@ fn json_to_dynamic(value: &serde_json::Value) -> Value {
     }
 }
 
+/// The Pebble color scheme: pebble's curated out-of-the-box look.
+/// A quartz-inspired dark theme: graphite blue-grey, jade accents and
+/// warm sand highlights, tuned for long sessions on Linux.
+const PEBBLE_SCHEME: &str = r##"
+[colors]
+ansi = [
+    "#151a22",
+    "#e78284",
+    "#a6d189",
+    "#e5c890",
+    "#8caaee",
+    "#c6a0f6",
+    "#81c8be",
+    "#c6d0f5",
+]
+background = "#11141a"
+brights = [
+    "#4c566a",
+    "#ef9f9f",
+    "#b9e4a0",
+    "#f2d5a0",
+    "#a5c0ff",
+    "#d5b8ff",
+    "#9adbd3",
+    "#e6ecf7",
+]
+compose_cursor = "#e6c07b"
+cursor_bg = "#e6c07b"
+cursor_border = "#e6c07b"
+cursor_fg = "#11141a"
+foreground = "#dde4f0"
+scrollbar_thumb = "#566273"
+selection_bg = "#2c3a4a"
+selection_fg = "#e6ecf7"
+split = "#7fd1c1"
+visual_bell = "#e6c07b"
+
+[colors.indexed]
+16 = "#e6c07b"
+17 = "#e78284"
+
+[colors.tab_bar]
+background = "#252629"
+inactive_tab_edge = "#202125"
+
+[colors.tab_bar.active_tab]
+bg_color = "#1f6ec8"
+fg_color = "#f5f7fb"
+intensity = "Normal"
+italic = false
+strikethrough = false
+underline = "None"
+
+[colors.tab_bar.inactive_tab]
+bg_color = "#3b3c41"
+fg_color = "#d5d7dd"
+intensity = "Normal"
+italic = false
+strikethrough = false
+underline = "None"
+
+[colors.tab_bar.inactive_tab_hover]
+bg_color = "#4a4b52"
+fg_color = "#ffffff"
+intensity = "Normal"
+italic = false
+strikethrough = false
+underline = "None"
+
+[colors.tab_bar.new_tab]
+bg_color = "#3b3c41"
+fg_color = "#d5d7dd"
+intensity = "Normal"
+italic = false
+strikethrough = false
+underline = "None"
+
+[colors.tab_bar.new_tab_hover]
+bg_color = "#4a4b52"
+fg_color = "#ffffff"
+intensity = "Normal"
+italic = false
+strikethrough = false
+underline = "None"
+
+[colors.tab_bar.app_icon]
+bg_color = "#d45578"
+fg_color = "#ffffff"
+intensity = "Normal"
+italic = false
+strikethrough = false
+underline = "None"
+
+[colors.tab_bar.app_icon_hover]
+bg_color = "#e26587"
+fg_color = "#ffffff"
+intensity = "Normal"
+italic = false
+strikethrough = false
+underline = "None"
+
+[metadata]
+aliases = ["Pebble Dark", "Pebble Night", "Pebble Quartz"]
+author = "Pebble"
+name = "Pebble"
+origin_url = "https://github.com/Praying/pebble"
+wezterm_version = "pebble"
+"##;
+
 pub fn build_default_schemes() -> HashMap<String, Palette> {
     let mut color_schemes = HashMap::new();
     for (scheme_name, data) in scheme_data::SCHEMES.iter() {
@@ -168,6 +277,19 @@ pub fn build_default_schemes() -> HashMap<String, Palette> {
             color_schemes.insert(alias, scheme.colors.clone());
         }
     }
+    // Pebble is the default scheme; register it explicitly rather than
+    // via scheme_data.rs so that a future `sync-color-schemes`
+    // regeneration cannot drop it.
+    let scheme = ColorSchemeFile::from_toml_str(PEBBLE_SCHEME).unwrap();
+    let name = scheme
+        .metadata
+        .name
+        .clone()
+        .unwrap_or_else(|| "Pebble".to_string());
+    for alias in scheme.metadata.aliases {
+        color_schemes.insert(alias, scheme.colors.clone());
+    }
+    color_schemes.insert(name, scheme.colors);
     color_schemes
 }
 
@@ -383,9 +505,9 @@ pub fn create_user_owned_dirs(p: &Path) -> anyhow::Result<()> {
 }
 
 fn xdg_config_home() -> PathBuf {
-    match std::env::var_os("XDG_CONFIG_HOME").map(|s| PathBuf::from(s).join("wezterm")) {
+    match std::env::var_os("XDG_CONFIG_HOME").map(|s| PathBuf::from(s).join("pebble")) {
         Some(p) => p,
-        None => HOME_DIR.join(".config").join("wezterm"),
+        None => HOME_DIR.join(".config").join("pebble"),
     }
 }
 
@@ -395,7 +517,7 @@ fn config_dirs() -> Vec<PathBuf> {
 
     #[cfg(unix)]
     if let Some(d) = std::env::var_os("XDG_CONFIG_DIRS") {
-        dirs.extend(std::env::split_paths(&d).map(|s| PathBuf::from(s).join("wezterm")));
+        dirs.extend(std::env::split_paths(&d).map(|s| PathBuf::from(s).join("pebble")));
     }
 
     dirs

@@ -1,58 +1,58 @@
-# Privacy Policy for WezTerm
+# Privacy Policy for Pebble
 
-No data about your device(s) or WezTerm usage leave your device.
+No data about your device(s) or Pebble usage leave your device by default.
 
-## Data Maintained by WezTerm
+## Data Maintained by Pebble
 
-WezTerm maintains some historical data, such as recent searches or action
+Pebble maintains some historical data, such as recent searches or action
 usage, in some of its overlays such as the debug overlay and character
 selector, in order to make your usage more convenient. It is used only
 by the local process, and care is taken to limit access for the associated
 files on disk to only your local user identity.
 
-WezTerm tracks the output from the commands that you have executed in
+Pebble tracks the output from the commands that you have executed in
 a scrollback buffer.  At the time of writing, that scrollback buffer
 is an in-memory structure that is not visible to other users of the machine.
-In the future, if wezterm expands to offload scrollback information to
+In the future, if Pebble expands to offload scrollback information to
 your local disk, it will do so in such a way that other users on the
 same system will not be able to inspect it.
 
 ## macOS and Data permissions
 
 On macOS, when a GUI application that has a "bundle" launches child processes
-(eg: WezTerm, running your shell, and your shell running the programs which you
+(eg: Pebble, running your shell, and your shell running the programs which you
 direct it to run), any permissioned resource access that may be attempted by
-those child processes will be reported as though WezTerm is attempting to
+those child processes will be reported as though Pebble is attempting to
 access those resources.
 
-The result is that from time to time you may see a dialog about WezTerm
+The result is that from time to time you may see a dialog about Pebble
 accessing your Contacts if run a `find` command that happens to step through
 the portion of your filesystem where the contacts are stored.  Or perhaps you
 are running a utility that accesses your camera; it will appear as though
-WezTerm is accessing those resources, but it is not: there is no logic within
-WezTerm to attempt to access your contacts, camera or any other sensitive
+Pebble is accessing those resources, but it is not: there is no logic within
+Pebble to attempt to access your contacts, camera or any other sensitive
 information.
 
 ## Update Checking
 
-By default, once every 24 hours, wezterm makes an HTTP request to GitHub's
-release API in order to determine if a newer version is available and to
-notify you if that is the case.
+Pebble disables update checking by default because upstream WezTerm releases do
+not apply to Pebble builds. If you enable checking, Pebble makes an HTTP request
+to the Pebble GitHub releases API to determine whether a newer version is
+available.
 
 The content of that request is private between your machine and GitHub.  The
 contributors to WezTerm cannot see inside that request and therefore cannot
 infer any information from it.
 
 If you wish, you can disable update checking. See
-https://wezterm.org/config/lua/config/check_for_updates.html for
+the [check_for_updates documentation](docs/config/lua/config/check_for_updates.md) for
 more information on that.
 
 ## Third-Party Builds
 
-The above is true of the wezterm source code and the binaries produced by
-wezterm's CI and made available from https://wezterm.org/ and
-https://github.com/wezterm/wezterm/.
+The above is true of the Pebble source code and binaries produced from this
+repository.
 
-If you obtained a pre-built wezterm binary from some other source be aware that
+If you obtained a pre-built Pebble binary from some other source be aware that
 the person(s) building those versions may have modified them to behave
 differently from the source version.

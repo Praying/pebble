@@ -115,10 +115,63 @@ impl crate::TermWindow {
             let new_tab = colors.new_tab();
             let new_tab_hover = colors.new_tab_hover();
             let active_tab = colors.active_tab();
-            let is_bottom = self.config.tab_bar_at_bottom;
-
+            let app_icon = colors.app_icon();
+            let app_icon_hover = colors.app_icon_hover();
             match item.item {
-                TabBarItem::RightStatus | TabBarItem::LeftStatus | TabBarItem::None => element
+                TabBarItem::AppIcon => Element::new(
+                    &font,
+                    ElementContent::Text("\u{f120}".to_string()),
+                )
+                .vertical_align(VerticalAlign::Middle)
+                .item_type(UIItemType::TabBar(item.item.clone()))
+                .margin(BoxDimension {
+                    left: Dimension::Cells(0.35),
+                    right: Dimension::Cells(0.35),
+                    top: Dimension::Cells(0.15),
+                    bottom: Dimension::Cells(0.15),
+                })
+                .padding(BoxDimension {
+                    left: Dimension::Cells(0.55),
+                    right: Dimension::Cells(0.55),
+                    top: Dimension::Cells(0.1),
+                    bottom: Dimension::Cells(0.1),
+                })
+                .border(BoxDimension::new(Dimension::Pixels(1.)))
+                .border_corners(Some(Corners {
+                    top_left: SizedPoly {
+                        width: Dimension::Cells(0.45),
+                        height: Dimension::Cells(0.45),
+                        poly: TOP_LEFT_ROUNDED_CORNER,
+                    },
+                    top_right: SizedPoly {
+                        width: Dimension::Cells(0.45),
+                        height: Dimension::Cells(0.45),
+                        poly: TOP_RIGHT_ROUNDED_CORNER,
+                    },
+                    bottom_left: SizedPoly {
+                        width: Dimension::Cells(0.45),
+                        height: Dimension::Cells(0.45),
+                        poly: BOTTOM_LEFT_ROUNDED_CORNER,
+                    },
+                    bottom_right: SizedPoly {
+                        width: Dimension::Cells(0.45),
+                        height: Dimension::Cells(0.45),
+                        poly: BOTTOM_RIGHT_ROUNDED_CORNER,
+                    },
+                }))
+                .colors(ElementColors {
+                    border: BorderColor::default(),
+                    bg: app_icon.bg_color.to_linear().into(),
+                    text: app_icon.fg_color.to_linear().into(),
+                })
+                .hover_colors(Some(ElementColors {
+                    border: BorderColor::default(),
+                    bg: app_icon_hover.bg_color.to_linear().into(),
+                    text: app_icon_hover.fg_color.to_linear().into(),
+                })),
+                TabBarItem::RightStatus
+                | TabBarItem::LeftStatus
+                | TabBarItem::None => element
                     .item_type(UIItemType::TabBar(TabBarItem::None))
                     .line_height(Some(1.75))
                     .margin(BoxDimension {
@@ -149,10 +202,10 @@ impl crate::TermWindow {
                 .vertical_align(VerticalAlign::Middle)
                 .item_type(UIItemType::TabBar(item.item.clone()))
                 .margin(BoxDimension {
-                    left: Dimension::Cells(0.5),
-                    right: Dimension::Cells(0.),
-                    top: Dimension::Cells(0.2),
-                    bottom: Dimension::Cells(0.),
+                    left: Dimension::Cells(0.25),
+                    right: Dimension::Cells(0.25),
+                    top: Dimension::Cells(0.15),
+                    bottom: Dimension::Cells(0.15),
                 })
                 .padding(BoxDimension {
                     left: Dimension::Cells(0.5),
@@ -161,6 +214,28 @@ impl crate::TermWindow {
                     bottom: Dimension::Cells(0.25),
                 })
                 .border(BoxDimension::new(Dimension::Pixels(1.)))
+                .border_corners(Some(Corners {
+                    top_left: SizedPoly {
+                        width: Dimension::Cells(0.4),
+                        height: Dimension::Cells(0.4),
+                        poly: TOP_LEFT_ROUNDED_CORNER,
+                    },
+                    top_right: SizedPoly {
+                        width: Dimension::Cells(0.4),
+                        height: Dimension::Cells(0.4),
+                        poly: TOP_RIGHT_ROUNDED_CORNER,
+                    },
+                    bottom_left: SizedPoly {
+                        width: Dimension::Cells(0.4),
+                        height: Dimension::Cells(0.4),
+                        poly: BOTTOM_LEFT_ROUNDED_CORNER,
+                    },
+                    bottom_right: SizedPoly {
+                        width: Dimension::Cells(0.4),
+                        height: Dimension::Cells(0.4),
+                        poly: BOTTOM_RIGHT_ROUNDED_CORNER,
+                    },
+                }))
                 .colors(ElementColors {
                     border: BorderColor::default(),
                     bg: new_tab.bg_color.to_linear().into(),
@@ -174,58 +249,40 @@ impl crate::TermWindow {
                 TabBarItem::Tab { active, .. } if active => element
                     .vertical_align(tab_vertical_alignment)
                     .item_type(UIItemType::TabBar(item.item.clone()))
-                    .margin(if is_bottom {
-                        BoxDimension {
-                            left: Dimension::Cells(0.),
-                            right: Dimension::Cells(0.),
-                            top: Dimension::Cells(0.),
-                            bottom: Dimension::Cells(0.2),
-                        }
-                    } else {
-                        BoxDimension {
-                            left: Dimension::Cells(0.),
-                            right: Dimension::Cells(0.),
-                            top: Dimension::Cells(0.2),
-                            bottom: Dimension::Cells(0.),
-                        }
+                    .margin(BoxDimension {
+                        left: Dimension::Cells(0.18),
+                        right: Dimension::Cells(0.18),
+                        top: Dimension::Cells(0.2),
+                        bottom: Dimension::Cells(0.2),
                     })
                     .padding(BoxDimension {
-                        left: Dimension::Cells(0.5),
-                        right: Dimension::Cells(0.5),
-                        top: Dimension::Cells(0.25),
-                        bottom: Dimension::Cells(0.25),
+                        left: Dimension::Cells(0.75),
+                        right: Dimension::Cells(0.65),
+                        top: Dimension::Cells(0.28),
+                        bottom: Dimension::Cells(0.28),
                     })
                     .border(BoxDimension::new(Dimension::Pixels(1.)))
-                    .border_corners(Some(if is_bottom {
-                        Corners {
-                            top_left: SizedPoly::none(),
-                            top_right: SizedPoly::none(),
-                            bottom_left: SizedPoly {
-                                width: Dimension::Cells(0.5),
-                                height: Dimension::Cells(0.5),
-                                poly: BOTTOM_LEFT_ROUNDED_CORNER,
-                            },
-                            bottom_right: SizedPoly {
-                                width: Dimension::Cells(0.5),
-                                height: Dimension::Cells(0.5),
-                                poly: BOTTOM_RIGHT_ROUNDED_CORNER,
-                            },
-                        }
-                    } else {
-                        Corners {
-                            top_left: SizedPoly {
-                                width: Dimension::Cells(0.5),
-                                height: Dimension::Cells(0.5),
-                                poly: TOP_LEFT_ROUNDED_CORNER,
-                            },
-                            top_right: SizedPoly {
-                                width: Dimension::Cells(0.5),
-                                height: Dimension::Cells(0.5),
-                                poly: TOP_RIGHT_ROUNDED_CORNER,
-                            },
-                            bottom_left: SizedPoly::none(),
-                            bottom_right: SizedPoly::none(),
-                        }
+                    .border_corners(Some(Corners {
+                        top_left: SizedPoly {
+                            width: Dimension::Cells(0.55),
+                            height: Dimension::Cells(0.55),
+                            poly: TOP_LEFT_ROUNDED_CORNER,
+                        },
+                        top_right: SizedPoly {
+                            width: Dimension::Cells(0.55),
+                            height: Dimension::Cells(0.55),
+                            poly: TOP_RIGHT_ROUNDED_CORNER,
+                        },
+                        bottom_left: SizedPoly {
+                            width: Dimension::Cells(0.55),
+                            height: Dimension::Cells(0.55),
+                            poly: BOTTOM_LEFT_ROUNDED_CORNER,
+                        },
+                        bottom_right: SizedPoly {
+                            width: Dimension::Cells(0.55),
+                            height: Dimension::Cells(0.55),
+                            poly: BOTTOM_RIGHT_ROUNDED_CORNER,
+                        },
                     }))
                     .colors(ElementColors {
                         border: BorderColor::new(
@@ -245,74 +302,40 @@ impl crate::TermWindow {
                 TabBarItem::Tab { .. } => element
                     .vertical_align(tab_vertical_alignment)
                     .item_type(UIItemType::TabBar(item.item.clone()))
-                    .margin(if is_bottom {
-                        BoxDimension {
-                            left: Dimension::Cells(0.),
-                            right: Dimension::Cells(0.),
-                            top: Dimension::Cells(0.),
-                            bottom: Dimension::Cells(0.2),
-                        }
-                    } else {
-                        BoxDimension {
-                            left: Dimension::Cells(0.),
-                            right: Dimension::Cells(0.),
-                            top: Dimension::Cells(0.2),
-                            bottom: Dimension::Cells(0.),
-                        }
+                    .margin(BoxDimension {
+                        left: Dimension::Cells(0.18),
+                        right: Dimension::Cells(0.18),
+                        top: Dimension::Cells(0.2),
+                        bottom: Dimension::Cells(0.2),
                     })
                     .padding(BoxDimension {
-                        left: Dimension::Cells(0.5),
-                        right: Dimension::Cells(0.5),
-                        top: Dimension::Cells(0.25),
-                        bottom: Dimension::Cells(0.25),
+                        left: Dimension::Cells(0.7),
+                        right: Dimension::Cells(0.6),
+                        top: Dimension::Cells(0.28),
+                        bottom: Dimension::Cells(0.28),
                     })
                     .border(BoxDimension::new(Dimension::Pixels(1.)))
-                    .border_corners(Some(if is_bottom {
-                        Corners {
-                            top_left: SizedPoly {
-                                width: Dimension::Cells(0.),
-                                height: Dimension::Cells(0.33),
-                                poly: &[],
-                            },
-                            top_right: SizedPoly {
-                                width: Dimension::Cells(0.),
-                                height: Dimension::Cells(0.33),
-                                poly: &[],
-                            },
-                            bottom_left: SizedPoly {
-                                width: Dimension::Cells(0.5),
-                                height: Dimension::Cells(0.5),
-                                poly: BOTTOM_LEFT_ROUNDED_CORNER,
-                            },
-                            bottom_right: SizedPoly {
-                                width: Dimension::Cells(0.5),
-                                height: Dimension::Cells(0.5),
-                                poly: BOTTOM_RIGHT_ROUNDED_CORNER,
-                            },
-                        }
-                    } else {
-                        Corners {
-                            top_left: SizedPoly {
-                                width: Dimension::Cells(0.5),
-                                height: Dimension::Cells(0.5),
-                                poly: TOP_LEFT_ROUNDED_CORNER,
-                            },
-                            top_right: SizedPoly {
-                                width: Dimension::Cells(0.5),
-                                height: Dimension::Cells(0.5),
-                                poly: TOP_RIGHT_ROUNDED_CORNER,
-                            },
-                            bottom_left: SizedPoly {
-                                width: Dimension::Cells(0.),
-                                height: Dimension::Cells(0.33),
-                                poly: &[],
-                            },
-                            bottom_right: SizedPoly {
-                                width: Dimension::Cells(0.),
-                                height: Dimension::Cells(0.33),
-                                poly: &[],
-                            },
-                        }
+                    .border_corners(Some(Corners {
+                        top_left: SizedPoly {
+                            width: Dimension::Cells(0.5),
+                            height: Dimension::Cells(0.5),
+                            poly: TOP_LEFT_ROUNDED_CORNER,
+                        },
+                        top_right: SizedPoly {
+                            width: Dimension::Cells(0.5),
+                            height: Dimension::Cells(0.5),
+                            poly: TOP_RIGHT_ROUNDED_CORNER,
+                        },
+                        bottom_left: SizedPoly {
+                            width: Dimension::Cells(0.5),
+                            height: Dimension::Cells(0.5),
+                            poly: BOTTOM_LEFT_ROUNDED_CORNER,
+                        },
+                        bottom_right: SizedPoly {
+                            width: Dimension::Cells(0.5),
+                            height: Dimension::Cells(0.5),
+                            poly: BOTTOM_RIGHT_ROUNDED_CORNER,
+                        },
                     }))
                     .colors({
                         let inactive_tab = colors.inactive_tab();
@@ -371,7 +394,8 @@ impl crate::TermWindow {
             .sum();
         let max_tab_width = ((self.dimensions.pixel_width as f32 / num_tabs)
             - (1.5 * metrics.cell_size.width as f32))
-            .max(0.);
+            .max(0.)
+            .min(self.config.tab_max_width as f32 * metrics.cell_size.width as f32);
 
         // Reserve space for the native titlebar buttons
         if self
@@ -404,6 +428,7 @@ impl crate::TermWindow {
                         right_eles.push(item_to_elem(item))
                     }
                 }
+                TabBarItem::AppIcon => left_eles.push(item_to_elem(item)),
                 TabBarItem::Tab { tab_idx, active } => {
                     let mut elem = item_to_elem(item);
                     elem.max_width = Some(Dimension::Pixels(max_tab_width));

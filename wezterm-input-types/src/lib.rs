@@ -2126,6 +2126,26 @@ impl Default for WindowDecorations {
     }
 }
 
+/// The default decoration set for the platform.
+///
+/// On Linux and the BSDs the tab bar doubles as the title bar: it draws
+/// the integrated window buttons and the window manager is asked for
+/// resize borders only.  This avoids stacking a compositor title bar on
+/// top of the tab bar, which is especially noticeable on KDE Plasma.
+pub fn default_window_decorations() -> WindowDecorations {
+    if cfg!(any(
+        target_os = "linux",
+        target_os = "freebsd",
+        target_os = "netbsd",
+        target_os = "openbsd",
+        target_os = "dragonfly"
+    )) {
+        WindowDecorations::INTEGRATED_BUTTONS | WindowDecorations::RESIZE
+    } else {
+        WindowDecorations::TITLE | WindowDecorations::RESIZE
+    }
+}
+
 #[derive(Debug, FromDynamic, ToDynamic, PartialEq, Eq, Clone, Copy)]
 pub enum IntegratedTitleButton {
     Hide,
@@ -2151,7 +2171,12 @@ impl Default for IntegratedTitleButtonStyle {
     fn default() -> Self {
         if cfg!(target_os = "macos") {
             Self::MacOsNative
+        } else if cfg!(target_os = "windows") {
+            Self::Windows
         } else {
+            // Pebble's Linux titlebar uses flat controls inspired by
+            // Deepin's desktop chrome; hover feedback supplies the
+            // affordance without adding permanent button circles.
             Self::Windows
         }
     }

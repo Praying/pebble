@@ -53,4 +53,4 @@ config.window_frame = {
 }
 ```
 
-The default font is `Roboto`. The default font_size is `10pt` on Windows and `12pt` on other systems.
+The default font is `Roboto` at `Medium` weight. The default font_size is `10pt` on all systems; pebble tunes the title bar slimmer than upstream wezterm.

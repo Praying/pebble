@@ -16,5 +16,6 @@ Possible styles are:
 * `"Gnome"` - draw Adwaita-style buttons
 * `"MacOsNative"` - on macOS only, move the native macOS buttons into the tab bar.
 
-The default value is `"MacOsNative"` on macOS systems, but `"Windows"` on other
-systems.
+The default value is `"MacOsNative"` on macOS systems, `"Windows"` on Windows,
+and `"Gnome"` on Linux and other systems (pebble picks the round Adwaita-style
+buttons for its dark titlebar).

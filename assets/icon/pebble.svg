@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-label="Pebble">
+  <defs>
+    <linearGradient id="tile" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1b2230"/>
+      <stop offset="1" stop-color="#0b0e13"/>
+    </linearGradient>
+    <linearGradient id="stone" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#b8efe6"/>
+      <stop offset="0.5" stop-color="#7fd1c1"/>
+      <stop offset="1" stop-color="#4f9f95"/>
+    </linearGradient>
+    <radialGradient id="sheen" cx="0.28" cy="0.22" r="0.78">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.62"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="sand" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f2d5a0"/>
+      <stop offset="1" stop-color="#d9a85c"/>
+    </linearGradient>
+  </defs>
+
+  <rect x="16" y="16" width="480" height="480" rx="112" fill="url(#tile)"/>
+  <rect x="16" y="16" width="480" height="480" rx="112" fill="none" stroke="#2a3340" stroke-width="4"/>
+
+  <ellipse cx="256" cy="248" rx="146" ry="126" fill="url(#stone)" transform="rotate(-8 256 248)"/>
+  <ellipse cx="212" cy="194" rx="78" ry="46" fill="url(#sheen)" transform="rotate(-20 212 194)"/>
+  <ellipse cx="256" cy="248" rx="146" ry="126" fill="none" stroke="#a8e6dc" stroke-opacity="0.35" stroke-width="3" transform="rotate(-8 256 248)"/>
+
+  <circle cx="368" cy="156" r="18" fill="url(#sand)"/>
+
+  <path d="M184 282 L232 324 L184 366" fill="none" stroke="#0d1015" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M270 366 H334" fill="none" stroke="#0d1015" stroke-width="28" stroke-linecap="round"/>
+
+  <path d="M150 404 C190 428 322 428 362 404" fill="none" stroke="#0d1015" stroke-opacity="0.28" stroke-width="10" stroke-linecap="round"/>
+</svg>

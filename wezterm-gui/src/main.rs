@@ -67,11 +67,12 @@ pub use termwindow::{set_window_class, set_window_position, TermWindow, ICON_DAT
 
 #[derive(Debug, Parser)]
 #[command(
-    about = "Wez's Terminal Emulator\nhttp://github.com/wezterm/wezterm",
+    name = "pebble-gui",
+    about = "Pebble, a beautiful terminal for Linux\nhttps://github.com/Praying/pebble",
     version = config::wezterm_version()
 )]
 struct Opt {
-    /// Skip loading wezterm.lua
+    /// Skip loading pebble.lua
     #[arg(long, short = 'n')]
     skip_config: bool,
 
@@ -123,7 +124,7 @@ enum SubCommand {
     #[command(name = "serial", about = "Open a serial port")]
     Serial(SerialCommand),
 
-    #[command(name = "connect", about = "Connect to wezterm multiplexer")]
+    #[command(name = "connect", about = "Connect to pebble multiplexer")]
     Connect(ConnectCommand),
 
     #[command(name = "ls-fonts", about = "Display information about fonts")]
@@ -412,7 +413,7 @@ async fn async_run_terminal_gui(
 ) -> anyhow::Result<()> {
     let unix_socket_path =
         config::RUNTIME_DIR.join(format!("gui-sock-{}", unsafe { libc::getpid() }));
-    std::env::set_var("WEZTERM_UNIX_SOCKET", unix_socket_path.clone());
+    std::env::set_var("PEBBLE_UNIX_SOCKET", unix_socket_path.clone());
     wezterm_blob_leases::register_storage(Arc::new(
         wezterm_blob_leases::simple_tempdir::SimpleTempDir::new_in(&*config::CACHE_DIR)?,
     ))?;
@@ -561,7 +562,7 @@ impl Publish {
                                 "Running GUI is a different executable from us, will start a new one");
                         }
                         if vers.config_file_path
-                            != std::env::var_os("WEZTERM_CONFIG_FILE").map(Into::into)
+                            != std::env::var_os("PEBBLE_CONFIG_FILE").map(Into::into)
                         {
                             *self = Publish::NoConnectNoPublish;
                             anyhow::bail!(
@@ -620,7 +621,7 @@ impl Publish {
                         Ok(res) => {
                             log::info!(
                                 "Spawned your command via the existing GUI instance. \
-                             Use wezterm start --always-new-process if you do not want this behavior. \
+                             Use pebble start --always-new-process if you do not want this behavior. \
                              Result={:?}",
                                 res
                             );
@@ -1172,7 +1173,7 @@ fn run() -> anyhow::Result<()> {
     {
         unsafe {
             ::windows::Win32::UI::Shell::SetCurrentProcessExplicitAppUserModelID(
-                ::windows::core::PCWSTR(wide_string("org.wezfurlong.wezterm").as_ptr()),
+                ::windows::core::PCWSTR(wide_string("io.github.praying.pebble").as_ptr()),
             )
             .unwrap();
         }
@@ -1233,7 +1234,7 @@ fn run() -> anyhow::Result<()> {
         Some(sub) => sub,
         None => {
             // Need to fake an argv0
-            let mut argv = vec!["wezterm-gui".to_string()];
+            let mut argv = vec!["pebble-gui".to_string()];
             for a in &config.default_gui_startup_args {
                 argv.push(a.clone());
             }

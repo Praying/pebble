@@ -1,7 +1,7 @@
 
 ## Quick Start
 
-Create a file named `.wezterm.lua` in your home directory, with the following
+Create a file named `~/.config/pebble/pebble.lua` with the following
 contents:
 
 ```lua
@@ -35,16 +35,15 @@ For more details, see:
 
 ## Configuration Files
 
-`wezterm` will look for a [lua](https://www.lua.org/manual/5.3/manual.html)
+Pebble looks for a [Lua](https://www.lua.org/manual/5.3/manual.html)
 configuration file using the logic shown below.
 
 !!! tip
-    The recommendation is to place your configuration file at `$HOME/.wezterm.lua`
-    (`%USERPROFILE%/.wezterm.lua` on Windows) to get started.
+    Pebble's default configuration path is `$HOME/.config/pebble/pebble.lua`
+    (or `%USERPROFILE%/.config/pebble/pebble.lua` on Windows).
 
-More complex configurations that need to span multiple files can be placed in
-`$XDG_CONFIG_HOME/wezterm/wezterm.lua` (for X11/Wayland) or
-`$HOME/.config/wezterm/wezterm.lua` (for all other systems).
+More complex configurations that span multiple files can live under
+`$XDG_CONFIG_HOME/pebble/` or `~/.config/pebble/`.
 
 {% raw %}
 ```mermaid
@@ -53,54 +52,51 @@ graph TD
   A -->|Yes| B{{Can that file be loaded?}}
   B -->|Yes| C[Use it]
   B -->|No| D[Use built-in default configuration]
-  A -->|No| E{{$WEZTERM_CONFIG_FILE<br/>environment set?}}
+  A -->|No| E{{$PEBBLE_CONFIG_FILE<br/>environment set?}}
   E -->|Yes| B
   E -->|No| F{{"Running on Windows and<br/>wezterm.lua exists in same<br/>dir as wezterm.exe?<br/>(Thumb drive mode)"}}
   F -->|Yes| B
-  F -->|No| H{{Is $XDG_CONFIG_HOME<br/>environment set and<br/>wezterm/wezterm.lua<br/>exists inside it?}}
+  F -->|No| H{{Is $XDG_CONFIG_HOME<br/>environment set and<br/>pebble/pebble.lua<br/>exists inside it?}}
   H -->|Yes| B
   J --> B
-  H -->|No| K{{Does $HOME/.config/wezterm/wezterm.lua exist?}}
+  H -->|No| K{{Does $HOME/.config/pebble/pebble.lua exist?}}
   K -->|Yes| B
-  K -->|No| J[Use $HOME/.wezterm.lua]
+  K -->|No| J[Use $HOME/.config/pebble/pebble.lua]
 ```
 {% endraw %}
 
-Prior to version 20210314-114017-04b7cedd, if the candidate file exists but
-failed to parse, wezterm would treat it as though it didn't exist and continue
-to try other candidate file locations. In all current versions of wezterm, an
-error will be shown and the default configuration will be used instead.
+If a candidate file exists but fails to parse, Pebble shows an error and uses
+the built-in defaults.
 
 !!! note
-    On Windows, to support users that carry their wezterm application and
-    configuration around on a thumb drive, wezterm will look for the config file in
-    the same location as wezterm.exe.  That is shown in the chart above as thumb
+    On Windows, to support portable installs, Pebble will look for `pebble.lua`
+    beside `pebble-gui.exe`. That is shown in the chart above as thumb
     drive mode.  It is **not** recommended to store your configs in that
     location if you are not running off a thumb drive.
 
-`wezterm` will watch the config file that it loads; if/when it changes, the
+Pebble watches the config file that it loads; if/when it changes, the
 configuration will be automatically reloaded and the majority of options will
 take effect immediately.  You may also use the `CTRL+SHIFT+R` keyboard shortcut
 to force the configuration to be reloaded.
 
 !!! info
-    **The configuration file may be evaluated multiple times for each wezterm
+    **The configuration file may be evaluated multiple times for each Pebble
     process** both at startup and in response to the configuration file being
     reloaded.  You should avoid taking actions in the main flow of the config file
     that have side effects; for example, unconditionally launching background
     processes can result in many of them being spawned over time if you launch
-    many copies of wezterm, or are frequently reloading your config file.
+    many copies of Pebble, or are frequently reloading your config file.
 
 ### Configuration Overrides
 
 {{since('20210314-114017-04b7cedd')}}
 
-`wezterm` allows overriding configuration values via the command line; here are
+`pebble` allows overriding configuration values via the command line; here are
 a couple of examples:
 
 ```bash
-$ wezterm --config enable_scroll_bar=true
-$ wezterm --config 'exit_behavior="Hold"'
+$ pebble --config enable_scroll_bar=true
+$ pebble --config 'exit_behavior="Hold"'
 ```
 
 Configuration specified via the command line will always override the values
@@ -114,7 +110,7 @@ for more information and examples of how to use that functionality.
 
 ## Configuration File Structure
 
-The `wezterm.lua` configuration file is a lua script which allows for a high
+The `pebble.lua` configuration file is a Lua script which allows for a high
 degree of flexibility.   The script is expected to return a configuration
 table, so a basic empty (and rather useless!) configuration file will look like
 this:
@@ -173,16 +169,16 @@ be interested in this information.
 
 The Lua `package.path` is configured with the following paths in this order:
 
-* On Windows: a `wezterm_modules` dir in the same directory as `wezterm.exe`. This is for thumb drive mode, and is not recommended to be used otherwise.
-* `~/.config/wezterm`
-* `~/.wezterm`
+* On Windows: a `pebble_modules` dir beside `pebble-gui.exe` for portable installs.
+* `~/.config/pebble`
+* `~/.pebble`
 * A system specific set of paths which may (or may not!) find locally installed lua modules
 
 That means that if you wanted to break your config up into a `helpers.lua` file
-you would place it in `~/.config/wezterm/helpers.lua` with contents like this:
+you would place it in `~/.config/pebble/helpers.lua` with contents like this:
 
 ```lua
--- I am helpers.lua and I should live in ~/.config/wezterm/helpers.lua
+-- I am helpers.lua and I should live in ~/.config/pebble/helpers.lua
 
 local wezterm = require 'wezterm'
 
@@ -211,7 +207,7 @@ end
 return module
 ```
 
-and then in your `wezterm.lua`
+and then in your `pebble.lua`
 you would use it like this:
 
 ```lua

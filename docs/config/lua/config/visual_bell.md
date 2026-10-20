@@ -20,7 +20,7 @@ There are four fields to the visual_bell config option:
 * `fade_out_function` - an easing function that affects how the bell color is faded out.
 * `target` - can be `"BackgroundColor"` (the default) to have the background color of the terminal change when the bell is rung, or `"CursorColor"` to have the cursor color change when the bell is rung.
 
-If the total fade in and out durations are 0, then there will be no visual bell indication.
+If the total fade in and out durations are 0, then there will be no visual bell indication. Pebble defaults to a short 80ms fade in and 160ms fade out.
 
 The bell color is itself specified in your color settings; if not specified, the text foreground color will be used.
 

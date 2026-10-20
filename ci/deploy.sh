@@ -38,7 +38,7 @@ case $OSTYPE in
     cp -r assets/shell-completion $zipdir/WezTerm.app/Contents/Resources
     tic -xe wezterm -o $zipdir/WezTerm.app/Contents/Resources/terminfo termwiz/data/wezterm.terminfo
 
-    for bin in wezterm wezterm-mux-server wezterm-gui strip-ansi-escapes ; do
+    for bin in pebble pebble-mux-server pebble-gui strip-ansi-escapes ; do
       # If the user ran a simple `cargo build --release`, then we want to allow
       # a single-arch package to be built
       if [[ -f $TARGET_DIR/release/$bin ]] ; then
@@ -112,11 +112,11 @@ case $OSTYPE in
     fi
     rm -rf $zipdir $zipname
     mkdir $zipdir
-    cp $TARGET_DIR/release/wezterm.exe \
-      $TARGET_DIR/release/wezterm-mux-server.exe \
-      $TARGET_DIR/release/wezterm-gui.exe \
+    cp $TARGET_DIR/release/pebble.exe \
+      $TARGET_DIR/release/pebble-mux-server.exe \
+      $TARGET_DIR/release/pebble-gui.exe \
       $TARGET_DIR/release/strip-ansi-escapes.exe \
-      $TARGET_DIR/release/wezterm.pdb \
+      $TARGET_DIR/release/pebble.pdb \
       assets/windows/conhost/conpty.dll \
       assets/windows/conhost/OpenConsole.exe \
       assets/windows/angle/libEGL.dll \
@@ -240,39 +240,39 @@ ${BUILD_SECTION}
 set -x
 cd ${HERE}
 mkdir -p %{buildroot}/usr/bin %{buildroot}/etc/profile.d %{buildroot}/usr/share/icons/hicolor/128x128/apps %{buildroot}/usr/share/applications %{buildroot}/usr/share/metainfo %{buildroot}/usr/share/nautilus-python/extensions
-install -Dm755 assets/open-wezterm-here -t %{buildroot}/usr/bin
-install -Dsm755 $TARGET_DIR/release/wezterm -t %{buildroot}/usr/bin
-install -Dsm755 $TARGET_DIR/release/wezterm-gui -t %{buildroot}/usr/bin
-install -Dsm755 $TARGET_DIR/release/wezterm-mux-server -t %{buildroot}/usr/bin
+install -Dm755 assets/open-pebble-here -t %{buildroot}/usr/bin
+install -Dsm755 $TARGET_DIR/release/pebble -t %{buildroot}/usr/bin
+install -Dsm755 $TARGET_DIR/release/pebble-gui -t %{buildroot}/usr/bin
+install -Dsm755 $TARGET_DIR/release/pebble-mux-server -t %{buildroot}/usr/bin
 install -Dsm755 $TARGET_DIR/release/strip-ansi-escapes -t %{buildroot}/usr/bin
 install -Dm644 assets/shell-integration/* -t %{buildroot}/etc/profile.d
-install -Dm644 assets/shell-completion/zsh %{buildroot}/usr/share/zsh/site-functions/_wezterm
-install -Dm644 assets/shell-completion/bash %{buildroot}/etc/bash_completion.d/wezterm
-install -Dm644 assets/icon/terminal.png %{buildroot}/usr/share/icons/hicolor/128x128/apps/org.wezfurlong.wezterm.png
-install -Dm644 assets/wezterm.desktop %{buildroot}/usr/share/applications/org.wezfurlong.wezterm.desktop
-install -Dm644 assets/wezterm.appdata.xml %{buildroot}/usr/share/metainfo/org.wezfurlong.wezterm.appdata.xml
-install -Dm644 assets/wezterm-nautilus.py %{buildroot}/usr/share/nautilus-python/extensions/wezterm-nautilus.py
+install -Dm644 assets/shell-completion/zsh %{buildroot}/usr/share/zsh/site-functions/_pebble
+install -Dm644 assets/shell-completion/bash %{buildroot}/etc/bash_completion.d/pebble
+install -Dm644 assets/icon/pebble.png %{buildroot}/usr/share/icons/hicolor/128x128/apps/io.github.praying.pebble.png
+install -Dm644 assets/pebble.desktop %{buildroot}/usr/share/applications/io.github.praying.pebble.desktop
+install -Dm644 assets/pebble.appdata.xml %{buildroot}/usr/share/metainfo/io.github.praying.pebble.appdata.xml
+install -Dm644 assets/pebble-nautilus.py %{buildroot}/usr/share/nautilus-python/extensions/wezterm-nautilus.py
 
 %files
 # Main package (metapackage) has no files
 
 %files -n wezterm-common
-/usr/bin/wezterm
+/usr/bin/pebble
 /usr/bin/strip-ansi-escapes
-/usr/share/zsh/site-functions/_wezterm
-/etc/bash_completion.d/wezterm
+/usr/share/zsh/site-functions/_pebble
+/etc/bash_completion.d/pebble
 /etc/profile.d/*
 
 %files -n wezterm-gui
-/usr/bin/open-wezterm-here
-/usr/bin/wezterm-gui
-/usr/share/icons/hicolor/128x128/apps/org.wezfurlong.wezterm.png
-/usr/share/applications/org.wezfurlong.wezterm.desktop
-/usr/share/metainfo/org.wezfurlong.wezterm.appdata.xml
+/usr/bin/open-pebble-here
+/usr/bin/pebble-gui
+/usr/share/icons/hicolor/128x128/apps/io.github.praying.pebble.png
+/usr/share/applications/io.github.praying.pebble.desktop
+/usr/share/metainfo/io.github.praying.pebble.appdata.xml
 /usr/share/nautilus-python/extensions/wezterm-nautilus.py*
 
 %files -n wezterm-mux-server
-/usr/bin/wezterm-mux-server
+/usr/bin/pebble-mux-server
 
 %changelog
 * Mon Oct 2 2023 Wez Furlong
@@ -320,7 +320,7 @@ EOF
 #!/bin/sh
 set -e
 if [ "\$1" = "configure" ] ; then
-        update-alternatives --install /usr/bin/x-terminal-emulator x-terminal-emulator /usr/bin/open-wezterm-here 20
+        update-alternatives --install /usr/bin/x-terminal-emulator x-terminal-emulator /usr/bin/open-pebble-here 20
 fi
 EOF
 
@@ -328,14 +328,14 @@ EOF
 #!/bin/sh
 set -e
 if [ "\$1" = "remove" ]; then
-	update-alternatives --remove x-terminal-emulator /usr/bin/open-wezterm-here
+	update-alternatives --remove x-terminal-emulator /usr/bin/open-pebble-here
 fi
 EOF
 
-        install -Dsm755 -t pkg/debian/usr/bin $TARGET_DIR/release/wezterm-mux-server
-        install -Dsm755 -t pkg/debian/usr/bin $TARGET_DIR/release/wezterm-gui
-        install -Dsm755 -t pkg/debian/usr/bin $TARGET_DIR/release/wezterm
-        install -Dm755 -t pkg/debian/usr/bin assets/open-wezterm-here
+        install -Dsm755 -t pkg/debian/usr/bin $TARGET_DIR/release/pebble-mux-server
+        install -Dsm755 -t pkg/debian/usr/bin $TARGET_DIR/release/pebble-gui
+        install -Dsm755 -t pkg/debian/usr/bin $TARGET_DIR/release/pebble
+        install -Dm755 -t pkg/debian/usr/bin assets/open-pebble-here
         install -Dsm755 -t pkg/debian/usr/bin $TARGET_DIR/release/strip-ansi-escapes
 
         deps=$(cd pkg && dpkg-shlibdeps -O -e debian/usr/bin/*)
@@ -348,12 +348,12 @@ EOF
         echo $deps | sed -e 's/shlibs:Depends=/Depends: /' >> pkg/debian/DEBIAN/control
         cat pkg/debian/DEBIAN/control
 
-        install -Dm644 assets/icon/terminal.png pkg/debian/usr/share/icons/hicolor/128x128/apps/org.wezfurlong.wezterm.png
-        install -Dm644 assets/wezterm.desktop pkg/debian/usr/share/applications/org.wezfurlong.wezterm.desktop
-        install -Dm644 assets/wezterm.appdata.xml pkg/debian/usr/share/metainfo/org.wezfurlong.wezterm.appdata.xml
-        install -Dm644 assets/wezterm-nautilus.py pkg/debian/usr/share/nautilus-python/extensions/wezterm-nautilus.py
-        install -Dm644 assets/shell-completion/bash pkg/debian/usr/share/bash-completion/completions/wezterm
-        install -Dm644 assets/shell-completion/zsh pkg/debian/usr/share/zsh/functions/Completion/Unix/_wezterm
+        install -Dm644 assets/icon/pebble.png pkg/debian/usr/share/icons/hicolor/128x128/apps/io.github.praying.pebble.png
+        install -Dm644 assets/pebble.desktop pkg/debian/usr/share/applications/io.github.praying.pebble.desktop
+        install -Dm644 assets/pebble.appdata.xml pkg/debian/usr/share/metainfo/io.github.praying.pebble.appdata.xml
+        install -Dm644 assets/pebble-nautilus.py pkg/debian/usr/share/nautilus-python/extensions/wezterm-nautilus.py
+        install -Dm644 assets/shell-completion/bash pkg/debian/usr/share/bash-completion/completions/pebble
+        install -Dm644 assets/shell-completion/zsh pkg/debian/usr/share/zsh/functions/Completion/Unix/_pebble
         install -Dm644 assets/shell-integration/* -t pkg/debian/etc/profile.d
 
         if [[ "$BUILD_REASON" == "Schedule" ]] ; then
@@ -401,14 +401,14 @@ options="!check"
 url="https://wezterm.org/"
 makedepends="cmd:tic"
 source="
-  $TARGET_DIR/release/wezterm
-  $TARGET_DIR/release/wezterm-gui
-  $TARGET_DIR/release/wezterm-mux-server
-  assets/open-wezterm-here
-  assets/wezterm.desktop
-  assets/wezterm.appdata.xml
-  assets/icon/terminal.png
-  assets/icon/wezterm-icon.svg
+  $TARGET_DIR/release/pebble
+  $TARGET_DIR/release/pebble-gui
+  $TARGET_DIR/release/pebble-mux-server
+  assets/open-pebble-here
+  assets/pebble.desktop
+  assets/pebble.appdata.xml
+  assets/icon/pebble.png
+  assets/icon/pebble.svg
   termwiz/data/wezterm.terminfo
 "
 builddir="\$srcdir"
@@ -418,17 +418,17 @@ build() {
 }
 
 package() {
-  install -Dm755 -t "\$pkgdir"/usr/bin "\$srcdir"/open-wezterm-here
-  install -Dm755 -t "\$pkgdir"/usr/bin "\$srcdir"/wezterm
-  install -Dm755 -t "\$pkgdir"/usr/bin "\$srcdir"/wezterm-gui
-  install -Dm755 -t "\$pkgdir"/usr/bin "\$srcdir"/wezterm-mux-server
+  install -Dm755 -t "\$pkgdir"/usr/bin "\$srcdir"/open-pebble-here
+  install -Dm755 -t "\$pkgdir"/usr/bin "\$srcdir"/pebble
+  install -Dm755 -t "\$pkgdir"/usr/bin "\$srcdir"/pebble-gui
+  install -Dm755 -t "\$pkgdir"/usr/bin "\$srcdir"/pebble-mux-server
 
-  install -Dm644 -t "\$pkgdir"/usr/share/applications "\$srcdir"/wezterm.desktop
-  install -Dm644 -t "\$pkgdir"/usr/share/metainfo "\$srcdir"/wezterm.appdata.xml
-  install -Dm644 "\$srcdir"/terminal.png "\$pkgdir"/usr/share/pixmaps/wezterm.png
-  install -Dm644 "\$srcdir"/wezterm-icon.svg "\$pkgdir"/usr/share/pixmaps/wezterm.svg
-  install -Dm644 "\$srcdir"/terminal.png "\$pkgdir"/usr/share/icons/hicolor/128x128/apps/wezterm.png
-  install -Dm644 "\$srcdir"/wezterm-icon.svg "\$pkgdir"/usr/share/icons/hicolor/scalable/apps/wezterm.svg
+  install -Dm644 -t "\$pkgdir"/usr/share/applications "\$srcdir"/pebble.desktop
+  install -Dm644 -t "\$pkgdir"/usr/share/metainfo "\$srcdir"/pebble.appdata.xml
+  install -Dm644 "\$srcdir"/pebble.png "\$pkgdir"/usr/share/pixmaps/pebble.png
+  install -Dm644 "\$srcdir"/pebble.svg "\$pkgdir"/usr/share/pixmaps/pebble.svg
+  install -Dm644 "\$srcdir"/pebble.png "\$pkgdir"/usr/share/icons/hicolor/128x128/apps/io.github.praying.pebble.png
+  install -Dm644 "\$srcdir"/pebble.svg "\$pkgdir"/usr/share/icons/hicolor/scalable/apps/io.github.praying.pebble.svg
   install -Dm644 "\$builddir"/wezterm.terminfo "\$pkgdir"/usr/share/terminfo/w/wezterm
 }
 EOF

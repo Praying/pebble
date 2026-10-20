@@ -5,14 +5,14 @@ set -e
 
 mkdir AppDir
 
-install -Dsm755 -t AppDir/usr/bin target/release/wezterm-mux-server
-install -Dsm755 -t AppDir/usr/bin target/release/wezterm
-install -Dsm755 -t AppDir/usr/bin target/release/wezterm-gui
+install -Dsm755 -t AppDir/usr/bin target/release/pebble-mux-server
+install -Dsm755 -t AppDir/usr/bin target/release/pebble
+install -Dsm755 -t AppDir/usr/bin target/release/pebble-gui
 install -Dsm755 -t AppDir/usr/bin target/release/strip-ansi-escapes
-install -Dm644 assets/icon/terminal.png AppDir/usr/share/icons/hicolor/128x128/apps/org.wezfurlong.wezterm.png
-install -Dm644 assets/wezterm.desktop AppDir/usr/share/applications/org.wezfurlong.wezterm.desktop
-install -Dm644 assets/wezterm.appdata.xml AppDir/usr/share/metainfo/org.wezfurlong.wezterm.appdata.xml
-install -Dm644 assets/wezterm-nautilus.py AppDir/usr/share/nautilus-python/extensions/wezterm-nautilus.py
+install -Dm644 assets/icon/pebble.png AppDir/usr/share/icons/hicolor/128x128/apps/io.github.praying.pebble.png
+install -Dm644 assets/pebble.desktop AppDir/usr/share/applications/io.github.praying.pebble.desktop
+install -Dm644 assets/pebble.appdata.xml AppDir/usr/share/metainfo/io.github.praying.pebble.appdata.xml
+install -Dm644 assets/pebble-nautilus.py AppDir/usr/share/nautilus-python/extensions/pebble-nautilus.py
 
 [ -x /tmp/linuxdeploy ] || ( curl -L 'https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage' -o /tmp/linuxdeploy && chmod +x /tmp/linuxdeploy )
 
@@ -23,11 +23,11 @@ distver=$(lsb_release -rs 2>/dev/null || sh -c "source /etc/os-release && echo \
 # Embed appropriate update info
 # https://github.com/AppImage/AppImageSpec/blob/master/draft.md#github-releases
 if [[ "$BUILD_REASON" == "Schedule" ]] ; then
-  UPDATE="gh-releases-zsync|wez|wezterm|nightly|WezTerm-*.AppImage.zsync"
-  OUTPUT=WezTerm-nightly-$distro$distver.AppImage
+  UPDATE="gh-releases-zsync|Praying|pebble|nightly|Pebble-*.AppImage.zsync"
+  OUTPUT=Pebble-nightly-$distro$distver.AppImage
 else
-  UPDATE="gh-releases-zsync|wez|wezterm|latest|WezTerm-*.AppImage.zsync"
-  OUTPUT=WezTerm-$TAG_NAME-$distro$distver.AppImage
+  UPDATE="gh-releases-zsync|Praying|pebble|latest|Pebble-*.AppImage.zsync"
+  OUTPUT=Pebble-$TAG_NAME-$distro$distver.AppImage
 fi
 
 # Munge the path so that it finds our appstreamcli wrapper
@@ -39,7 +39,7 @@ OUTPUT="$OUTPUT" \
   --exclude-library='libwayland-client.so.0' \
   --appdir AppDir \
   --output appimage \
-  --desktop-file assets/wezterm.desktop
+  --desktop-file assets/pebble.desktop
 
 # Update the AUR build file.  We only really want to use this for tagged
 # builds but it doesn't hurt to generate it always here.

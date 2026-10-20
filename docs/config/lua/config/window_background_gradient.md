@@ -7,6 +7,10 @@ tags:
 
 {{since('20210814-124438-54e29167')}}
 
+Pebble keeps the default Quartz background flat so that user-supplied background
+images and layers behave exactly as configured. A restrained graphite gradient
+such as `#151A24` to `#0B0E13` is a good optional complement to Quartz.
+
 Dynamically generates a [window_background_image](window_background_image.md) from the provided
 gradient specification.
 When `window_background_gradient` is configured, the value for `window_background_image` is

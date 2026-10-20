@@ -1,4 +1,4 @@
-wezterm supports integrating with the shell through the following means:
+Pebble supports shell integration through the following means:
 
 * `OSC 7` Escape sequences to advise the terminal of the working directory
 * `OSC 133` Escape sequence to define Input, Output and Prompt zones
@@ -14,11 +14,11 @@ or [conveniently selecting the complete output from a command](config/lua/keyass
 In order for these features to be enabled, you will need to configure your
 shell program to emit the escape sequences at the appropriate place.
 
-You can find some [examples for various shells in the wezterm
-repo](https://github.com/wezterm/wezterm/tree/main/assets/shell-integration).
+The Bash/Zsh integration script is shipped as
+[`assets/shell-integration/pebble.sh`](../assets/shell-integration/pebble.sh).
 
-To use this file to setup shell integration in wezterm with Bash or Zsh, you can
-copy the file to your computer and source it via `. /path/to/file.sh` in your `.bashrc`
+To set up shell integration with Bash or Zsh, source the file via
+`. /path/to/pebble.sh` in your `.bashrc`
 or `.zshrc`, or you can install it at `/etc/profile.d` on most unix systems.
 
 Xonsh is supported via a [term-integrations](https://github.com/jnoortheen/xontrib-term-integrations) plugin.
@@ -39,20 +39,20 @@ can be found below.
 to environment variables, except that they are variables associated with a
 given pane rather than a process.
 
-Installing the wezterm shell integration will define the following user vars
+Installing the Pebble shell integration will define the following user vars
 by default:
 
-* `WEZTERM_PROG` - the command line being executed by the shell
-* `WEZTERM_USER` - holds the output from `id -un`; the current user name
-* `WEZTERM_HOST` - holds the output from `hostname`; the hostname that the shell is running on
-* `WEZTERM_IN_TMUX` - holds `1` if the shell is running inside tmux, `0` otherwise
+* `PEBBLE_PROG` - the command line being executed by the shell
+* `PEBBLE_USER` - holds the output from `id -un`; the current user name
+* `PEBBLE_HOST` - holds the output from `hostname`; the hostname that the shell is running on
+* `PEBBLE_IN_TMUX` - holds `1` if the shell is running inside tmux, `0` otherwise
 
 If you are a tmux user, you must ensure that you have `set -g allow-passthrough on` set
 in your tmux.conf for user vars to work.
 
 Those vars will be updated each time the prompt is shown and just prior to executing a command.
 
-The shell integration provides a shell function named `__wezterm_set_user_var` which can be
+The shell integration provides a shell function named `__pebble_set_user_var` which can be
 used to set your own user vars.
 
 Setting a user var will generate events in the window that contains
@@ -101,7 +101,7 @@ for yourself.
 `cmd.exe` doesn't allow a lot of flexibility in configuring the prompt,
 but fortunately it does allow for emitting escape sequences.  You
 can use the `set_environment_variables` configuration to pre-configure
-the prompt environment in your `.wezterm.lua`; this example configures
+the prompt environment in your `pebble.lua`; this example configures
 the use of OSC 7 as well as including the time and current directory in
 the visible prompt with green and purple colors, and makes the prompt
 span multiple lines:
@@ -154,8 +154,8 @@ function Invoke-Starship-PreCommand {
 [Clink](https://github.com/chrisant996/clink) brings bash style line editing,
 completions and autosuggestions to your Windows cmd.exe experience. If you
 haven't installed clink to be the global default on your system, you can
-configure wezterm to launch clink by setting the `default_prog` configuration
-in your `.wezterm.lua`; for example, if you have extracted clink to `c:\clink`
+configure Pebble to launch clink by setting the `default_prog` configuration
+in your `pebble.lua`; for example, if you have extracted clink to `c:\clink`
 you might configure this:
 
 ```lua

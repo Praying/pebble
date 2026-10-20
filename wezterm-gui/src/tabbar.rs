@@ -27,6 +27,7 @@ pub struct TabBarState {
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum TabBarItem {
     None,
+    AppIcon,
     LeftStatus,
     RightStatus,
     Tab { tab_idx: usize, active: bool },
@@ -512,6 +513,19 @@ impl TabBarState {
                 .set_background(ColorSpec::TrueColor(*colors.background()))
                 .clone(),
         );
+
+        if use_integrated_title_buttons && config.use_fancy_tab_bar {
+            let app_icon = parse_status_text(">_", CellAttributes::default());
+            let width = app_icon.len();
+            items.push(TabEntry {
+                item: TabBarItem::AppIcon,
+                title: app_icon.clone(),
+                x,
+                width,
+            });
+            line.append_line(app_icon, SEQ_ZERO);
+            x += width;
+        }
 
         if use_integrated_title_buttons
             && config.integrated_title_button_style == IntegratedTitleButtonStyle::MacOsNative

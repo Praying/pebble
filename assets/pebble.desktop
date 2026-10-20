@@ -1,0 +1,12 @@
+[Desktop Entry]
+Name=Pebble
+GenericName=Terminal Emulator
+Comment=A beautiful GPU-accelerated terminal for Linux
+Keywords=terminal;shell;prompt;command;commandline;console;konsole;
+Icon=io.github.praying.pebble
+StartupWMClass=io.github.praying.pebble
+TryExec=pebble
+Exec=pebble start --cwd .
+Type=Application
+Categories=System;TerminalEmulator;Utility;
+Terminal=false

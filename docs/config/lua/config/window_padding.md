@@ -35,7 +35,9 @@ a string value with a unit suffix:
 
 You may use a fractional number such as `"0.5cell"` or numbers larger than one such as `"72pt"`.
 
-The default padding is shown below.  In earlier releases, the default padding was 0 for each of the possible edges.
+The upstream default padding is shown below. Pebble uses slightly more
+breathing room by default: `1.25cell` on the left and right, and `0.75cell` on
+the top and bottom.
 
 ```lua
 config.window_padding = {
@@ -45,4 +47,3 @@ config.window_padding = {
   bottom = '0.5cell',
 }
 ```
-

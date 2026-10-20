@@ -557,16 +557,16 @@ impl FontConfigInner {
     }
 
     fn compute_title_font(&self, config: &ConfigHandle, make_bold: bool) -> (TextStyle, f64) {
-        fn bold(family: &str) -> FontAttributes {
+        fn medium(family: &str) -> FontAttributes {
             FontAttributes {
                 family: family.to_string(),
-                weight: FontWeight::BOLD,
+                weight: FontWeight::MEDIUM,
                 ..Default::default()
             }
         }
 
         let mut fonts = vec![if make_bold {
-            bold("Roboto")
+            medium("Roboto")
         } else {
             FontAttributes::new("Roboto")
         }];
@@ -581,7 +581,10 @@ impl FontConfigInner {
             fonts.push(font);
         }
 
-        let font_size = if cfg!(windows) { 10. } else { 12. };
+        // pebble: the tab bar doubles as the title bar, so 10.5pt gives the
+        // tabs, the new-tab button and the integrated window buttons room to
+        // breathe without making the bar feel heavy.
+        let font_size = 10.5;
 
         (
             TextStyle {

@@ -2,7 +2,7 @@
 tags:
   - appearance
 ---
-# `window_decorations = "TITLE | RESIZE"`
+# `window_decorations`
 
 {{since('20210314-114017-04b7cedd')}}
 
@@ -16,7 +16,7 @@ The value is a set of flags:
   the title bar.
 * `window_decorations = "TITLE"` - disable the resizable border and enable only the title bar
 * `window_decorations = "RESIZE"` - disable the title bar but enable the resizable border
-* `window_decorations = "TITLE | RESIZE"` - Enable titlebar and border.  This is the default.
+* `window_decorations = "TITLE | RESIZE"` - Enable the system title bar and resize border.
 
 {{since('20230320-124340-559cb7b0', outline=true)}}
     The following flags are also supported on macOS:
@@ -38,6 +38,11 @@ The value is a set of flags:
       [integrated_title_button_alignment](integrated_title_button_alignment.md)
       [integrated_title_button_color](integrated_title_button_color.md) and,
       if you are using the retro tab bar, [tab_bar_style](tab_bar_style.md).
+
+Pebble defaults to `INTEGRATED_BUTTONS|RESIZE` on Linux. The tab bar becomes
+the single title bar and carries the window controls, avoiding a second
+compositor title bar above it. The resize border stays enabled. On macOS and
+Windows, Pebble retains the platform title bar by default.
 
 {{since('nightly', outline=true)}}
     The following flags are also supported:
@@ -76,4 +81,3 @@ desktop environment to resize the window.  Windows users may wish to consider
 
 !!! tip
     You probably always want `RESIZE` to be listed in your `window_decorations`.
-

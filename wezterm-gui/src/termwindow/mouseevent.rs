@@ -467,7 +467,10 @@ impl super::TermWindow {
                 TabBarItem::NewTabButton { .. } => {
                     self.do_new_tab_button_click(MousePress::Left);
                 }
-                TabBarItem::None | TabBarItem::LeftStatus | TabBarItem::RightStatus => {
+                TabBarItem::AppIcon
+                | TabBarItem::None
+                | TabBarItem::LeftStatus
+                | TabBarItem::RightStatus => {
                     let maximized = self
                         .window_state
                         .intersects(WindowState::MAXIMIZED | WindowState::FULL_SCREEN);
@@ -518,6 +521,7 @@ impl super::TermWindow {
                     self.do_new_tab_button_click(MousePress::Middle);
                 }
                 TabBarItem::None
+                | TabBarItem::AppIcon
                 | TabBarItem::LeftStatus
                 | TabBarItem::RightStatus
                 | TabBarItem::WindowButton(_) => {}
@@ -529,13 +533,17 @@ impl super::TermWindow {
                 TabBarItem::NewTabButton { .. } => {
                     self.do_new_tab_button_click(MousePress::Right);
                 }
-                TabBarItem::None
+                TabBarItem::AppIcon
+                | TabBarItem::None
                 | TabBarItem::LeftStatus
                 | TabBarItem::RightStatus
                 | TabBarItem::WindowButton(_) => {}
             },
             WMEK::Move => match item {
-                TabBarItem::None | TabBarItem::LeftStatus | TabBarItem::RightStatus => {
+                TabBarItem::AppIcon
+                | TabBarItem::None
+                | TabBarItem::LeftStatus
+                | TabBarItem::RightStatus => {
                     context.set_window_drag_position(event.screen_coords);
                 }
                 TabBarItem::WindowButton(window::IntegratedTitleButton::Maximize) => {

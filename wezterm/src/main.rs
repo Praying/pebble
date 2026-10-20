@@ -23,11 +23,12 @@ mod cli;
 
 #[derive(Debug, Parser)]
 #[command(
-    about = "Wez's Terminal Emulator\nhttp://github.com/wezterm/wezterm",
+    name = "pebble",
+    about = "Pebble, a beautiful terminal for Linux\nhttps://github.com/Praying/pebble",
     version = wezterm_version()
 )]
 pub struct Opt {
-    /// Skip loading wezterm.lua
+    /// Skip loading pebble.lua
     #[arg(long, short = 'n')]
     skip_config: bool,
 
@@ -107,7 +108,7 @@ enum SubCommand {
     #[command(name = "serial", about = "Open a serial port")]
     Serial(SerialCommand),
 
-    #[command(name = "connect", about = "Connect to wezterm multiplexer")]
+    #[command(name = "connect", about = "Connect to pebble multiplexer")]
     Connect(ConnectCommand),
 
     #[command(name = "ls-fonts", about = "Display information about fonts")]
@@ -772,9 +773,9 @@ fn delegate_to_gui(saver: UmaskSaver) -> anyhow::Result<()> {
     drop(saver);
 
     let exe_name = if cfg!(windows) {
-        "wezterm-gui.exe"
+        "pebble-gui.exe"
     } else {
-        "wezterm-gui"
+        "pebble-gui"
     };
 
     let exe = std::env::current_exe()?

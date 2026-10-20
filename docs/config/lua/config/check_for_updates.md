@@ -10,6 +10,12 @@ on github, and shows a simple UI to let you know about the update
 
 By default it is checked once every 24 hours.
 
+!!! note
+    pebble disables `check_for_updates` by default: the upstream
+    wezterm release channel does not apply to pebble builds, so
+    the check would only produce confusing results. Set it to
+    `true` explicitly if you want it back.
+
 NOTE that it doesn't automatically download the release.
 No data are collected for the wezterm project as part of this.
 
